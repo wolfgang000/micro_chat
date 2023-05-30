@@ -1,0 +1,69 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "backend/**"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "backend/**"
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: backend
+
+env:
+  MIX_ENV: test
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu20
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.14.5"
+          otp-version: "26.0"
+
+      - name: Retrieve Mix Dependencies Cache
+        uses: actions/cache@v1
+        id: mix-cache
+        with:
+          path: backend/deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+
+      - name: Install Mix Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p deps
+          mix deps.get
+
+      - name: Run tests
+        run: mix test
+
+      - name: Retrieve PLT Cache
+        uses: actions/cache@v1
+        id: plt-cache
+        with:
+          path: backend/priv/plts
+          key: ${{ runner.os }}-plts-${{ hashFiles('**/mix.lock') }}
+
+      - name: Create PLTs
+        if: steps.plt-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p priv/plts
+          mix dialyzer --plt
+
+      - name: Run dialyzer
+        run: mix dialyzer --no-check
