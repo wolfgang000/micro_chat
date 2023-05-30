@@ -19,9 +19,6 @@ defaults:
   run:
     working-directory: backend
 
-env:
-  MIX_ENV: test
-
 jobs:
   build:
     name: Build and test
