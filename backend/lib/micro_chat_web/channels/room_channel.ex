@@ -3,11 +3,13 @@ defmodule MicroChatWeb.RoomChannel do
 
   @impl true
   def join("room:" <> _room_id, payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
+    # if authorized?(payload) do
+    #   {:ok, socket}
+    # else
+    #   {:error, %{reason: "unauthorized"}}
+    # end
+
+    {:ok, socket}
   end
 
   # Channels can be used in a request/response fashion
