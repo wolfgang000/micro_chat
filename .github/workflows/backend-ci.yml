@@ -34,7 +34,7 @@ jobs:
           otp-version: "26.0"
 
       - name: Retrieve Mix Dependencies Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: mix-cache
         with:
           path: backend/deps
