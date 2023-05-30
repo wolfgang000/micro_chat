@@ -50,7 +50,7 @@ jobs:
         run: mix test
 
       - name: Retrieve PLT Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: plt-cache
         with:
           path: backend/priv/plts
