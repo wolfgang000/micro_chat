@@ -9,3 +9,7 @@ updates:
     directory: "/backend"
     schedule:
       interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "monthly"
