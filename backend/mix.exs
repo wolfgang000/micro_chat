@@ -9,7 +9,8 @@ defmodule MicroChat.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer()
     ]
   end
 
@@ -20,6 +21,13 @@ defmodule MicroChat.MixProject do
     [
       mod: {MicroChat.Application, []},
       extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_core_path: "priv/plts",
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
     ]
   end
 
@@ -34,6 +42,7 @@ defmodule MicroChat.MixProject do
     [
       {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
+      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_live_dashboard, "~> 0.7.2"},
@@ -56,6 +65,7 @@ defmodule MicroChat.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      check: ["dialyzer"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end

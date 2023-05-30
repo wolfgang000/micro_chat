@@ -2,7 +2,7 @@ defmodule MicroChatWeb.RoomChannel do
   use MicroChatWeb, :channel
 
   @impl true
-  def join("room:lobby", payload, socket) do
+  def join("room:" <> _room_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else
