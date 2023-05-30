@@ -26,7 +26,7 @@ jobs:
     env:
       ImageOS: ubuntu20
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
@@ -34,7 +34,7 @@ jobs:
           otp-version: "26.0"
 
       - name: Retrieve Mix Dependencies Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: mix-cache
         with:
           path: backend/deps
@@ -50,7 +50,7 @@ jobs:
         run: mix test
 
       - name: Retrieve PLT Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: plt-cache
         with:
           path: backend/priv/plts
