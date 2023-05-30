@@ -4,24 +4,21 @@ defmodule MicroChatWeb.RoomChannelTest do
   setup do
     {:ok, _, socket} =
       MicroChatWeb.UserSocket
-      |> socket("user_id", %{some: :assign})
+      |> socket("user_id", %{username: "test_user"})
       |> subscribe_and_join(MicroChatWeb.RoomChannel, "room:lobby")
 
     %{socket: socket}
   end
 
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push(socket, "ping", %{"hello" => "there"})
-    assert_reply ref, :ok, %{"hello" => "there"}
-  end
+  test "send new message to room:lobby", %{socket: socket} do
+    %{assigns: %{username: username}} = socket
 
-  test "shout broadcasts to room:lobby", %{socket: socket} do
-    push(socket, "shout", %{"hello" => "all"})
-    assert_broadcast "shout", %{"hello" => "all"}
-  end
+    push(socket, "client.new_message", %{"msg" => "some text"})
 
-  test "broadcasts are pushed to the client", %{socket: socket} do
-    broadcast_from!(socket, "broadcast", %{"some" => "data"})
-    assert_push "broadcast", %{"some" => "data"}
+    assert_broadcast("server.new_message", %{
+      "msg" => "some text",
+      "username" => ^username,
+      "created_at" => _
+    })
   end
 end
