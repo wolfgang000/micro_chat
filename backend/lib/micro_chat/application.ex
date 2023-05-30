@@ -11,7 +11,7 @@ defmodule MicroChat.Application do
       # Start the Telemetry supervisor
       MicroChatWeb.Telemetry,
       # Start the Ecto repository
-      MicroChat.Repo,
+      # MicroChat.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: MicroChat.PubSub},
       # Start the Endpoint (http/https)

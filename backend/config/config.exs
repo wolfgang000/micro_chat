@@ -7,8 +7,8 @@
 # General application configuration
 import Config
 
-config :micro_chat,
-  ecto_repos: [MicroChat.Repo]
+# config :micro_chat,
+#   ecto_repos: [MicroChat.Repo]
 
 # Configures the endpoint
 config :micro_chat, MicroChatWeb.Endpoint,
