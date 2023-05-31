@@ -3,16 +3,23 @@ defmodule MicroChatWeb.UserSocket do
 
   channel("room:*", MicroChatWeb.RoomChannel)
 
+  @impl true
   def connect(
-        %{
-          "username" => username
-        },
+        params,
         socket,
         _connect_info
       ) do
-    {:ok,
-     socket
-     |> assign(:username, username)}
+    case params do
+      %{
+        "username" => username
+      } ->
+        {:ok,
+         socket
+         |> assign(:username, username)}
+
+      _ ->
+        :error
+    end
   end
 
   @impl true

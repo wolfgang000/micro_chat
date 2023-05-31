@@ -7,3 +7,4 @@
 - [ ] Add user present tracking
 - [ ] Add user present tracking(on typing)
 - [ ] Add message insertion transition
+- [ ] Add frontend logger
