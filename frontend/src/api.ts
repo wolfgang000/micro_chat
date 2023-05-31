@@ -7,7 +7,8 @@ class SocketConnection {
   #connectionRequestTimeout = 5000
 
   connect(params: any): Promise<void> {
-    if (this.socket && this.socket.connectionState() in ['connecting', 'open']) {
+    if (this.socket) {
+      // Todo: This doesn't seem to be working, check later
       this.socket.disconnect()
     }
 
