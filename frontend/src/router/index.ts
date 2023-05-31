@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { userStore } from '../stores/user'
 
-import HomeView from '../views/HomeView.vue'
 import ChatRoomView from '../views/ChatRoomView.vue'
 import LoginView from '../views/LoginView.vue'
 import CreateRoomView from '../views/CreateRoomView.vue'
@@ -20,11 +19,6 @@ const requireUser = (to: any, from: any, next: any) => {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
     {
       path: '/room/:roomId',
       name: 'chat-room',
