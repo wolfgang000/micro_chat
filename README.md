@@ -10,3 +10,4 @@
 - [ ] Add frontend logger
 - [ ] Add icon
 - [ ] Add 404 page
+- [ ] Add remember my username option

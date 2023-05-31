@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { userStore } from '../stores/user'
 
-import HomeView from '../views/HomeView.vue'
 import ChatRoomView from '../views/ChatRoomView.vue'
 import LoginView from '../views/LoginView.vue'
 import CreateRoomView from '../views/CreateRoomView.vue'
