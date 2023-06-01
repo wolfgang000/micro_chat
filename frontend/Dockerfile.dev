@@ -1,0 +1,5 @@
+FROM node:18.16.0-slim
+
+RUN apt update -y \
+    && apt install curl -y \
+    && apt clean
