@@ -19,6 +19,7 @@ const requireUser = (to: any, from: any, next: any) => {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/', redirect: { name: 'create-room' } },
     {
       path: '/room/:roomId',
       name: 'chat-room',
