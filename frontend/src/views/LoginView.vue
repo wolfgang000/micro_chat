@@ -30,8 +30,8 @@ const onSubmit = () => {
   <main>
     <div>
       <form @submit.prevent="onSubmit">
-        <input v-model="username" required />
-        <button type="submit">Login</button>
+        <input id="username_field" v-model="username" required />
+        <button id="login_button" type="submit">Login</button>
       </form>
     </div>
   </main>

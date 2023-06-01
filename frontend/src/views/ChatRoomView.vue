@@ -35,7 +35,7 @@ onUnmounted(() => {
   socketConnection.deleteChannel(channelName)
 })
 
-const submitMessage = () => {
+const onSubmit = () => {
   channel.push('client.new_message', { msg: message.value })
   message.value = ''
 }
@@ -44,11 +44,15 @@ const submitMessage = () => {
 <template>
   <main>
     <div>
-      <div v-for="message in messages">
-        {{ message.msg }}
+      <div id="message_list">
+        <div v-for="message in messages">
+          {{ message.msg }}
+        </div>
       </div>
-      <input v-model="message" />
-      <button @click="submitMessage">Send</button>
+      <form @submit.prevent="onSubmit">
+        <input id="msg_field" v-model="message" required />
+        <button id="send_msg_button" type="submit">Send</button>
+      </form>
     </div>
   </main>
 </template>
