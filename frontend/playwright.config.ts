@@ -105,7 +105,7 @@ const config: PlaywrightTestConfig = {
      */
     command: process.env.CI ? 'vite preview --port 5173' : 'vite dev',
     port: 5173,
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: true
   }
 }
 
