@@ -25,10 +25,46 @@ services:
       retries: 5
       start_period: 15s
 
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.dev
+    working_dir: /home/node/app
+    environment:
+      VITE_WEBSOCKET_BASE_URL: ws://localhost:4000
+    volumes:
+      - ./frontend/tsconfig.json:/home/node/app/tsconfig.json
+      - ./frontend/tsconfig.vitest.json:/home/node/app/tsconfig.vitest.json
+      - ./frontend/vitest.config.ts:/home/node/app/vitest.config.ts
+      - ./frontend/tsconfig.app.json:/home/node/app/tsconfig.app.json
+      - ./frontend/tsconfig.node.json:/home/node/app/tsconfig.node.json
+      - ./frontend/vite.config.ts:/home/node/app/vite.config.ts
+      - ./frontend/index.html:/home/node/app/index.html
+      - ./frontend/env.d.ts:/home/node/app/env.d.ts
+      - ./frontend/src:/home/node/app/src
+      - ./frontend/public:/home/node/app/public
+      - ./frontend/package.json:/home/node/app/package.json
+      - ./frontend/package-lock.json:/home/node/app/package-lock.json
+      - ./frontend/healthcheck.js:/home/node/app/healthcheck.js
+      - node_modules_cache_frontend:/home/node/app/node_modules
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+    command: /bin/sh -c " npm install && npm run dev"
+    ports:
+      - 5173:5173
+
   entrypoint:
     image: "busybox:latest"
     depends_on:
       backend:
+        condition: service_healthy
+      frontend:
         condition: service_healthy
 
 volumes:
