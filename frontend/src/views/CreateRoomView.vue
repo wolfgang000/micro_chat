@@ -12,7 +12,7 @@ const onSubmit = () => {
 <template>
   <main>
     <form @submit.prevent="onSubmit">
-      <button type="submit">Create a new room</button>
+      <button id="create_room_button" type="submit">Create a new room</button>
     </form>
   </main>
 </template>

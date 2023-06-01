@@ -17,7 +17,7 @@ export class LoginPage {
   }
 
   async validateCurrentUrl() {
-    await this.page.waitForURL(/login/)
+    await this.page.waitForURL(/\/login/)
   }
 
   async performLogin(username: string) {
