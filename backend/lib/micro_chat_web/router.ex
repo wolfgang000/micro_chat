@@ -9,6 +9,19 @@ defmodule MicroChatWeb.Router do
     pipe_through :api
   end
 
+  #####################
+  forward(
+      "/api/health",
+      PlugCheckup,
+      PlugCheckup.Options.new(
+        json_encoder: Jason,
+        checks: [
+          %PlugCheckup.Check{name: "Dummy", module: MicroChatWeb.Healthchecks, function: :dummy_check}
+        ]
+      )
+    )
+
+
   # Enable LiveDashboard in development
   if Application.compile_env(:micro_chat, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
