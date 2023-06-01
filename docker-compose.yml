@@ -45,7 +45,6 @@ services:
       - ./frontend/public:/home/node/app/public
       - ./frontend/package.json:/home/node/app/package.json
       - ./frontend/package-lock.json:/home/node/app/package-lock.json
-      - ./frontend/healthcheck.js:/home/node/app/healthcheck.js
       - node_modules_cache_frontend:/home/node/app/node_modules
 
     healthcheck:
