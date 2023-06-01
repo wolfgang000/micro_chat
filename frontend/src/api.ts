@@ -1,6 +1,7 @@
 import { Socket, Channel } from 'phoenix'
 import environment from './env'
 
+// TODO: Replace this class in the future with a FSM for better handling of the connection state
 class SocketConnection {
   socket: Socket | undefined
   #onOpenRef: string | undefined
