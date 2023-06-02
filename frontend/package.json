@@ -17,6 +17,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "bootstrap": "^5.3.0",
     "phoenix": "^1.7.3",
     "pinia": "^2.0.36",
     "uuid": "^9.0.0",
