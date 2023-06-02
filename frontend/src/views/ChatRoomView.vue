@@ -2,22 +2,18 @@
 import { ref, onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
-
-interface Message {
-  msg: string
-  created_at: string
-  username: string
-}
+import type { IMessage } from '@/models'
+import ChatMessage from '@/components/chat-room/ChatMessage.vue'
 
 const message = ref('')
-const messages = ref([] as Message[])
+const messages = ref([] as IMessage[])
 
 const route = useRoute()
 const roomId = route.params.roomId
 const channelName = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelName)
 
-channel.on('server.new_message', (message: Message) => {
+channel.on('server.new_message', (message: IMessage) => {
   messages.value.push(message)
 })
 
@@ -42,17 +38,33 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <main>
-    <div>
-      <div id="message_list">
-        <div v-for="message in messages">
-          {{ message.msg }}
-        </div>
-      </div>
-      <form @submit.prevent="onSubmit">
-        <input id="msg_field" v-model="message" required />
-        <button id="send_msg_button" type="submit">Send</button>
-      </form>
+  <div class="chat-room-main-container container d-flex flex-column" style="height: 100vh">
+    <div id="message_list" class="msg_history d-flex flex-column-reverse">
+      <ChatMessage v-for="(msg, index) in messages" v-bind:key="index" :message="msg" />
     </div>
-  </main>
+    <form @submit.prevent="onSubmit">
+      <div class="input-group mb-3 px-3">
+        <input
+          id="msg_field"
+          type="text"
+          class="form-control"
+          placeholder="Message"
+          v-model="message"
+          aria-describedby="send_msg_button"
+          required
+        />
+        <button id="send_msg_button" class="btn btn-primary" type="submit">Send</button>
+      </div>
+    </form>
+  </div>
 </template>
+
+<style scoped>
+.chat-room-main-container {
+  background: #f7f9fa;
+}
+.msg_history {
+  height: 100%;
+  overflow-y: auto;
+}
+</style>
