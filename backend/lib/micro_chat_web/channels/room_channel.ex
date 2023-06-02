@@ -7,10 +7,10 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("client.new_message", %{"msg" => msg} = _payload, socket) do
+  def handle_in("client.new_message", %{"body" => body} = _payload, socket) do
     broadcast(socket, "server.new_message", %{
       "username" => socket.assigns.username,
-      "msg" => msg,
+      "body" => body,
       "created_at" => DateTime.utc_now() |> DateTime.to_iso8601()
     })
 

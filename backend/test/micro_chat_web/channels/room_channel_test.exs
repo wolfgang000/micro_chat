@@ -13,10 +13,10 @@ defmodule MicroChatWeb.RoomChannelTest do
   test "send new message to room:lobby", %{socket: socket} do
     %{assigns: %{username: username}} = socket
 
-    push(socket, "client.new_message", %{"msg" => "some text"})
+    push(socket, "client.new_message", %{"body" => "some text"})
 
     assert_broadcast("server.new_message", %{
-      "msg" => "some text",
+      "body" => "some text",
       "username" => ^username,
       "created_at" => _
     })

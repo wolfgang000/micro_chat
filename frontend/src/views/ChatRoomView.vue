@@ -32,7 +32,7 @@ onUnmounted(() => {
 })
 
 const onSubmit = () => {
-  channel.push('client.new_message', { msg: message.value })
+  channel.push('client.new_message', { body: message.value })
   message.value = ''
 }
 </script>
