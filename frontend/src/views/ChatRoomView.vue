@@ -14,7 +14,7 @@ const channelName = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelName)
 
 channel.on('server.new_message', (message: IMessage) => {
-  messages.value.push(message)
+  messages.value.unshift(message)
 })
 
 channel
