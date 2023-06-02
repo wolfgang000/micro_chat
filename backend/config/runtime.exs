@@ -48,6 +48,13 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  frontend_url =
+    System.get_env("FRONTEND_URL") ||
+      raise """
+      environment variable FRONTEND_URL is missing.
+      You can generate one by calling: mix phx.gen.secret
+      """
+
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
 
@@ -61,7 +68,8 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    check_origin: [frontend_url]
 
   # ## SSL Support
   #
