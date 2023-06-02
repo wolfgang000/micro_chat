@@ -38,7 +38,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <div class="chat-room-main-container container d-flex flex-column" style="height: 100vh">
+  <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <div id="message_list" class="msg_history d-flex flex-column-reverse">
       <ChatMessage v-for="(msg, index) in messages" v-bind:key="index" :message="msg" />
     </div>
@@ -66,5 +66,24 @@ const onSubmit = () => {
 .msg_history {
   height: 100%;
   overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(226, 221, 221, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgb(255, 255, 255, 0.8);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 </style>
