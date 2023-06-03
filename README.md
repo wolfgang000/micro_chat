@@ -8,9 +8,9 @@
 docker compose up
 ```
 
-Frontend: http://localhost:8000
+Frontend: http://localhost:5173
 
-Backend: http://localhost:8001
+Backend: http://localhost:4000
 
 ## Tests
 
