@@ -1,3 +1,10 @@
+<p align=center>
+<img src="https://github.com/wolfgang000/micro_chat/assets/4041136/6f2d3aab-0f24-4bdb-ad15-dbf2f65bd045"/>
+</p>
+<p align=center>
+  A simple chat app
+</p>
+
 [![Backend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml?query=branch%3Amain)
 [![Frontend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml?query=branch%3Amain)
 [![E2E CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml?query=branch%3Amain)
