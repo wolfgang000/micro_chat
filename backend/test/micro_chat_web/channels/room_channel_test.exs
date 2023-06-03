@@ -16,7 +16,7 @@ defmodule MicroChatWeb.RoomChannelTest do
     push(socket, "client.new_message", %{"body" => "some text"})
 
     assert_broadcast("server.new_message", %{
-      "body" => "some textt",
+      "body" => "some text",
       "username" => ^username,
       "created_at" => _
     })
