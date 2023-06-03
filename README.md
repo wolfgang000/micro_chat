@@ -1,3 +1,5 @@
+![example workflow](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml/badge.svg)
+
 # Dokku Deployment
 
 ## Setup server
