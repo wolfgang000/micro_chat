@@ -2,6 +2,22 @@
 [![Frontend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml?query=branch%3Amain)
 [![E2E CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml?query=branch%3Amain)
 
+# Get started
+
+```
+docker compose up
+```
+
+Frontend: http://localhost:8000
+
+Backend: http://localhost:8001
+
+## Tests
+
+[Backend](backend/README.md#tests)
+
+[Frontend + E2E](frontend/README.md#run-end-to-end-tests-with-playwright)
+
 # Deployment
 
 ## Setup server
@@ -70,7 +86,7 @@ dokku logs micro-chat-back
 - [ ] Add password protection
 - [ ] Add video call with webrtc
 - [ ] Add captcha
-- [ ] Add credo
+- [ ] Add credo + format validation
 - [ ] Add user present tracking
 - [ ] Add user present tracking(on typing)
 - [ ] Add message insertion transition
