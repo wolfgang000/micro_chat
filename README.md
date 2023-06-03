@@ -2,7 +2,9 @@
 <img src="https://github.com/wolfgang000/micro_chat/assets/4041136/6f2d3aab-0f24-4bdb-ad15-dbf2f65bd045"/>
 </p>
 <p align=center>
-  A simple chat app
+  A simple chat app that does not save/track or monitor your messages.
+  
+  Thus if you were not present in the chat room when your friends were chatting about the last John Wick movie, tough luck, those messages are gone.
 </p>
 
 [![Backend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml?query=branch%3Amain)
