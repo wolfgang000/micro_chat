@@ -22,6 +22,27 @@ test('Try to login with invalid username(empty field)', async ({ page }) => {
   await loginPage.validateCurrentUrl()
 })
 
+test("login with 'Remember my username' option", async ({ context }) => {
+  const username = v4()
+
+  const firstSession = await context.newPage()
+  await firstSession.goto('/')
+  const loginPage1 = new LoginPage(firstSession)
+  const chatRoomPage1 = new ChatRoomPage(firstSession)
+  await expect(await loginPage1.rememberMeCheckbox.isChecked()).toBeFalsy()
+  await loginPage1.rememberMeCheckbox.check()
+  await expect(await loginPage1.rememberMeCheckbox.isChecked()).toBeTruthy()
+  await loginPage1.performLogin(username)
+
+  //-------------------------
+
+  const secondSession = await context.newPage()
+  await secondSession.goto('/')
+  const loginPage2 = new LoginPage(secondSession)
+  await expect(await loginPage2.rememberMeCheckbox.isChecked()).toBeTruthy()
+  await expect(await loginPage2.usernameField.inputValue()).toBe(username)
+})
+
 test('Login and redirect to existing room', async ({ page }) => {
   const loginPage = new LoginPage(page)
   const chatRoomPage = new ChatRoomPage(page)

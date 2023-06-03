@@ -73,7 +73,6 @@ dokku logs micro-chat-back
 - [ ] Add frontend logger
 - [ ] Add icon
 - [ ] Add 404 page
-- [ ] Add remember my username option
 - [ ] Add share url on create room
 - [ ] Add room name
 - [ ] Add validations to username
