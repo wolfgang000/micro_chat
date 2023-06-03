@@ -1,8 +1,8 @@
-![Backend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml/badge.svg)
-![Frontend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml/badge.svg)
-![E2E CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml/badge.svg)
+![Backend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/backend-ci.yml/badge.svg?branch=main)
+![Frontend CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/frontend-ci.yml/badge.svg?branch=main)
+![E2E CI badge](https://github.com/wolfgang000/micro_chat/actions/workflows/e2e-ci.yml/badge.svg?branch=main)
 
-# Dokku Deployment
+# Deployment
 
 ## Setup server
 
