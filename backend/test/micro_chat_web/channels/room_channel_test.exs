@@ -4,7 +4,10 @@ defmodule MicroChatWeb.RoomChannelTest do
   setup do
     {:ok, _, socket} =
       MicroChatWeb.UserSocket
-      |> socket("user_id", %{username: "test_user"})
+      |> socket("user_id", %{
+        username: "test_user",
+        user_id: Ecto.UUID.bingenerate() |> Ecto.UUID.cast!()
+      })
       |> subscribe_and_join(MicroChatWeb.RoomChannel, "room:lobby")
 
     %{socket: socket}

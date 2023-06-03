@@ -15,7 +15,8 @@ defmodule MicroChatWeb.UserSocket do
       } ->
         {:ok,
          socket
-         |> assign(:username, username)}
+         |> assign(:username, username)
+         |> assign(:user_id, Ecto.UUID.bingenerate() |> Ecto.UUID.cast!())}
 
       _ ->
         :error
@@ -23,5 +24,5 @@ defmodule MicroChatWeb.UserSocket do
   end
 
   @impl true
-  def id(_socket), do: nil
+  def id(%{assigns: %{user_id: user_id}} = _socket), do: "user_id:#{user_id}"
 end
