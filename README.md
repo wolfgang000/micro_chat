@@ -76,3 +76,4 @@ dokku logs micro-chat-back
 - [ ] Add remember my username option
 - [ ] Add share url on create room
 - [ ] Add room name
+- [ ] Add validations to username
