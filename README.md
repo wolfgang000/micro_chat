@@ -71,7 +71,6 @@ dokku logs micro-chat-back
 - [ ] Add user present tracking(on typing)
 - [ ] Add message insertion transition
 - [ ] Add frontend logger
-- [ ] Add icon
 - [ ] Add 404 page
 - [ ] Add share url on create room
 - [ ] Add room name
