@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { type IMessage } from '@/models'
+import { type IChatListItem } from '@/models'
 import { computed } from 'vue'
 import dateFormat from 'dateformat'
-import { userStore } from '@/stores/user'
+import ChatEvent from './ChatEvent.vue'
+import ChatMessageReceived from './ChatMessageReceived.vue'
+import ChatMessageSent from './ChatMessageSent.vue'
 
 const props = defineProps<{
-  message: IMessage
+  item: IChatListItem
 }>()
 
 const doesMessageBelongToCurrentUser = computed(() => {

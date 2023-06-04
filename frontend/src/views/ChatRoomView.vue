@@ -2,11 +2,17 @@
 import { ref, onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
-import type { IMessage } from '@/models'
-import ChatMessage from '@/components/chat-room/ChatMessage.vue'
+import { ChatListItemType } from '@/models'
+import type { IMessage, IChatListItem } from '@/models'
+import { Presence } from 'phoenix'
+import { userStore } from '@/stores/user'
 
+import ChatMessage from '@/components/chat-room/ChatListItem.vue'
+import dateFormat from 'dateformat'
+
+let presences = {}
 const message = ref('')
-const messages = ref([] as IMessage[])
+const listItems = ref([] as IChatListItem[])
 
 const route = useRoute()
 const roomId = route.params.roomId
@@ -14,7 +20,36 @@ const channelName = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelName)
 
 channel.on('server.new_message', (message: IMessage) => {
-  messages.value.unshift(message)
+  message.created_at = dateFormat(message.created_at, 'dddd, mmmm d, yyyy | h:MM TT')
+
+  const itemType =
+    message.username === userStore.username
+      ? ChatListItemType.MessageSent
+      : ChatListItemType.MessageReceived
+
+  listItems.value.unshift({ type: itemType, meta: message })
+})
+
+channel.on('presence_state', (state) => {
+  console.log('state')
+  console.log(state)
+  presences = Presence.syncState(presences, state)
+  console.log('presence_state')
+  console.log(presences)
+})
+
+channel.on('presence_diff', (diff) => {
+  console.log('diff')
+  console.log(diff)
+  presences = Presence.syncDiff(presences, diff)
+  console.log('presence_diff')
+  // Presence.list(presences, (id, data) => {
+  //   console.log(id)
+  //   console.log(data)
+
+  //   return null
+  // })
+  console.log(presences)
 })
 
 channel
@@ -40,7 +75,7 @@ const onSubmit = () => {
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <div id="message_list" class="msg_history d-flex flex-column-reverse">
-      <ChatMessage v-for="(msg, index) in messages" v-bind:key="index" :message="msg" />
+      <ChatMessage v-for="(item, index) in listItems" v-bind:key="index" :item="item" />
     </div>
     <form @submit.prevent="onSubmit">
       <div class="input-group mb-3 px-3">
