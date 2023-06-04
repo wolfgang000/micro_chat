@@ -1,46 +1,19 @@
 <script setup lang="ts">
-import { type IChatListItem } from '@/models'
-import { computed } from 'vue'
-import dateFormat from 'dateformat'
-import ChatEvent from './ChatEvent.vue'
-import ChatMessageReceived from './ChatMessageReceived.vue'
-import ChatMessageSent from './ChatMessageSent.vue'
+import { type IChatEvent } from '@/models'
 
 const props = defineProps<{
-  item: IChatListItem
+  item: IChatEvent
 }>()
-
-const doesMessageBelongToCurrentUser = computed(() => {
-  return props.message.username === userStore.username
-})
-const formattedDate = computed(() => {
-  return dateFormat(props.message.created_at, 'dddd, mmmm d, yyyy | h:MM TT')
-})
 </script>
 
 <template>
-  <div
-    class="msg-container mx-1"
-    :class="{
-      'flex-row-reverse': doesMessageBelongToCurrentUser,
-      'flex-row': !doesMessageBelongToCurrentUser
-    }"
-  >
-    <div
-      class="flex-column"
-      :class="{
-        'msg-sent': doesMessageBelongToCurrentUser,
-        'msg-received': !doesMessageBelongToCurrentUser
-      }"
-    >
+  <div class="msg-container mx-1">
+    <div class="flex-column">
       <div class="body-container">
         <div class="p-2">
-          <div>{{ message.body }}</div>
+          <div>{{ item.body }}</div>
         </div>
       </div>
-      <span class="time_date"
-        ><strong>{{ props.message.username }}</strong> | {{ formattedDate }}
-      </span>
     </div>
   </div>
 </template>
