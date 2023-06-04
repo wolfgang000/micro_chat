@@ -19,3 +19,8 @@ export interface IChatListItem {
   meta: IMessage | IChatEvent
   type: ChatListItemType
 }
+
+export interface IConnectedUser {
+  phx_ref: string
+  username: string
+}

@@ -6,11 +6,12 @@ import { ChatListItemType } from '@/models'
 import type { IMessage, IChatListItem } from '@/models'
 import { Presence } from 'phoenix'
 import { userStore } from '@/stores/user'
+import { roomStore, roomPresences } from '@/stores/room'
 
 import ChatList from '@/components/chat-room/List.vue'
+import ChatHeader from '@/components/chat-room/Header.vue'
 import dateFormat from 'dateformat'
 
-let presences = {}
 const message = ref('')
 const listItems = ref([] as IChatListItem[])
 
@@ -39,13 +40,9 @@ let onJoin = (id: any, current: any, newPres: any) => {
         created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
       }
     })
-
-    console.log('user has entered for the first time', newPres)
-  } else {
-    console.log('user additional presence', newPres)
   }
 }
-// detect if user has left from all tabs/devices, or is still present
+
 let onLeave = (id: any, current: any, leftPres: any) => {
   if (current.metas.length === 0) {
     listItems.value.unshift({
@@ -55,33 +52,26 @@ let onLeave = (id: any, current: any, leftPres: any) => {
         created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
       }
     })
-
-    console.log('user has left from all devices', leftPres)
-  } else {
-    console.log('user left from a device', leftPres)
   }
 }
 
 channel.on('presence_state', (state) => {
-  console.log('state')
-  console.log(state)
-  presences = Presence.syncState(presences, state)
-  // console.log('presence_state')
-  // console.log(presences)
+  roomStore.setRoomPresences({})
+
+  const presences = Presence.syncState(roomPresences, state)
+  roomStore.setRoomPresences(presences)
+  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
+    return user
+  })
+  roomStore.setConnectedUsers(connectedUsers)
 })
 
 channel.on('presence_diff', (diff) => {
-  // console.log('diff')
-  // console.log(diff)
-  presences = Presence.syncDiff(presences, diff, onJoin, onLeave)
-  // console.log('presence_diff')
-  // Presence.list(presences, (id, data) => {
-  //   console.log(id)
-  //   console.log(data)
-
-  //   return null
-  // })
-  // console.log(presences)
+  const presences = Presence.syncDiff(roomPresences, diff, onJoin, onLeave)
+  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
+    return user
+  })
+  roomStore.setConnectedUsers(connectedUsers)
 })
 
 channel
@@ -106,6 +96,7 @@ const onSubmit = () => {
 
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
+    <ChatHeader />
     <ChatList :items="listItems" />
     <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">
