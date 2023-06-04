@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="d-flex flex-column mx-1 msg-container" style="text-align: center">
+  <div class="d-flex flex-column mx-1 msg-container">
     <div class="">
       <div class="body-container d-inline-flex">
         <div class="p-2">
@@ -15,7 +15,7 @@ const props = defineProps<{
         </div>
       </div>
     </div>
-    <span class="time_date"> {{ item.created_at }} </span>
+    <span class="time-date"> {{ item.created_at }} </span>
   </div>
 </template>
 
@@ -26,31 +26,10 @@ const props = defineProps<{
   text-align: center;
 }
 
-.time_date {
+.time-date {
   color: #747474;
   font-size: 12px;
 }
-
-/*********************/
-
-.msg-sent {
-  display: flex;
-  padding-right: 1%;
-  padding-left: 15%;
-  align-self: flex-end;
-  width: 100%;
-}
-
-.msg-sent .body-container {
-  font-family: 'Proxima Nova Regular', sans-serif;
-  background: #46468c;
-  border-radius: 7px;
-  font-size: 14px;
-  color: #fff;
-  align-self: inherit;
-}
-
-/*********************/
 
 .body-container {
   font-family: 'Proxima Nova Regular', sans-serif;

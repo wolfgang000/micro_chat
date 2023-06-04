@@ -22,19 +22,7 @@ const props = defineProps<{
 </template>
 
 <style scoped>
-.msg-container {
-  display: block;
-  margin-bottom: 1rem;
-}
-
-.time_date {
-  color: #747474;
-  font-size: 12px;
-  margin: 8px;
-  align-self: inherit;
-}
-
-/*********************/
+@import './base.css';
 
 .msg-received {
   display: flex;

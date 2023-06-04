@@ -107,7 +107,7 @@ const onSubmit = () => {
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <ChatList :items="listItems" />
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">
         <input
           id="msg_field"
