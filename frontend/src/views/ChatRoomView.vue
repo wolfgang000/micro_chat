@@ -7,7 +7,7 @@ import type { IMessage, IChatListItem } from '@/models'
 import { Presence } from 'phoenix'
 import { userStore } from '@/stores/user'
 
-import ChatMessage from '@/components/chat-room/list-item/ListItem.vue'
+import ChatList from '@/components/chat-room/List.vue'
 import dateFormat from 'dateformat'
 
 let presences = {}
@@ -106,9 +106,7 @@ const onSubmit = () => {
 
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
-    <div id="message_list" class="msg_history d-flex flex-column-reverse">
-      <ChatMessage v-for="(item, index) in listItems" v-bind:key="index" :item="item" />
-    </div>
+    <ChatList :items="listItems" />
     <form @submit.prevent="onSubmit">
       <div class="input-group mb-3 px-3">
         <input
@@ -129,28 +127,5 @@ const onSubmit = () => {
 <style scoped>
 .chat-room-main-container {
   background: #f7f9fa;
-}
-.msg_history {
-  height: 100%;
-  overflow-y: auto;
-}
-
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(226, 221, 221, 0.8);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: rgb(255, 255, 255, 0.8);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 </style>
