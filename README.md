@@ -96,7 +96,6 @@ dokku logs micro-chat-back
 - [ ] Add video call with webrtc
 - [ ] Add captcha
 - [ ] Add credo + format validation
-- [ ] Add user present tracking
 - [ ] Add user present tracking(on typing)
 - [ ] Add message insertion transition
 - [ ] Add frontend logger

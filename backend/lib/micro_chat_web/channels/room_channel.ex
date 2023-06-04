@@ -1,8 +1,11 @@
 defmodule MicroChatWeb.RoomChannel do
   use MicroChatWeb, :channel
+  alias MicroChatWeb.Presence
 
   @impl true
   def join("room:" <> _room_id, _payload, socket) do
+    send(self(), :after_join)
+
     {:ok, socket}
   end
 
@@ -14,6 +17,16 @@ defmodule MicroChatWeb.RoomChannel do
       "created_at" => DateTime.utc_now() |> DateTime.to_iso8601()
     })
 
+    {:noreply, socket}
+  end
+
+
+  def handle_info(:after_join, socket) do
+    {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{
+      username: socket.assigns.username,
+    })
+
+    push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
 end

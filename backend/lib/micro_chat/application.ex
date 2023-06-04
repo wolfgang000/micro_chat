@@ -14,6 +14,7 @@ defmodule MicroChat.Application do
       # MicroChat.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: MicroChat.PubSub},
+      MicroChatWeb.Presence,
       # Start the Endpoint (http/https)
       MicroChatWeb.Endpoint
       # Start a worker by calling: MicroChat.Worker.start_link(arg)

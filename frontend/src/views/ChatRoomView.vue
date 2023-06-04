@@ -2,11 +2,18 @@
 import { ref, onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
-import type { IMessage } from '@/models'
-import ChatMessage from '@/components/chat-room/ChatMessage.vue'
+import { ChatListItemType } from '@/models'
+import type { IMessage, IChatListItem } from '@/models'
+import { Presence } from 'phoenix'
+import { userStore } from '@/stores/user'
+import { roomStore, roomPresences } from '@/stores/room'
+
+import ChatList from '@/components/chat-room/List.vue'
+import ChatHeader from '@/components/chat-room/Header.vue'
+import dateFormat from 'dateformat'
 
 const message = ref('')
-const messages = ref([] as IMessage[])
+const listItems = ref([] as IChatListItem[])
 
 const route = useRoute()
 const roomId = route.params.roomId
@@ -14,12 +21,63 @@ const channelName = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelName)
 
 channel.on('server.new_message', (message: IMessage) => {
-  messages.value.unshift(message)
+  message.created_at = dateFormat(message.created_at, 'dddd, mmmm d, yyyy | h:MM TT')
+
+  const itemType =
+    message.username === userStore.username
+      ? ChatListItemType.MessageSent
+      : ChatListItemType.MessageReceived
+
+  listItems.value.unshift({ type: itemType, meta: message })
+})
+
+let onJoin = (id: any, current: any, newPres: any) => {
+  if (!current) {
+    listItems.value.unshift({
+      type: ChatListItemType.ChatEvent,
+      meta: {
+        body: `${newPres.metas[0].username} has join the room`,
+        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
+      }
+    })
+  }
+}
+
+let onLeave = (id: any, current: any, leftPres: any) => {
+  if (current.metas.length === 0) {
+    listItems.value.unshift({
+      type: ChatListItemType.ChatEvent,
+      meta: {
+        body: `${leftPres.metas[0].username} has left the room`,
+        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
+      }
+    })
+  }
+}
+
+channel.on('presence_state', (state) => {
+  roomStore.setRoomPresences({})
+
+  const presences = Presence.syncState(roomPresences, state)
+  roomStore.setRoomPresences(presences)
+  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
+    return user
+  })
+  roomStore.setConnectedUsers(connectedUsers)
+})
+
+channel.on('presence_diff', (diff) => {
+  const presences = Presence.syncDiff(roomPresences, diff, onJoin, onLeave)
+  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
+    return user
+  })
+  roomStore.setConnectedUsers(connectedUsers)
 })
 
 channel
   .join()
   .receive('ok', (resp: any): void => {
+    roomStore.setRoomName(`#${roomId}`)
     console.log('Joined successfully', resp)
   })
   .receive('error', (resp: any): void => {
@@ -39,10 +97,9 @@ const onSubmit = () => {
 
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
-    <div id="message_list" class="msg_history d-flex flex-column-reverse">
-      <ChatMessage v-for="(msg, index) in messages" v-bind:key="index" :message="msg" />
-    </div>
-    <form @submit.prevent="onSubmit">
+    <ChatHeader />
+    <ChatList :items="listItems" />
+    <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">
         <input
           id="msg_field"
@@ -62,28 +119,5 @@ const onSubmit = () => {
 <style scoped>
 .chat-room-main-container {
   background: #f7f9fa;
-}
-.msg_history {
-  height: 100%;
-  overflow-y: auto;
-}
-
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(226, 221, 221, 0.8);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background: rgb(255, 255, 255, 0.8);
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 </style>
