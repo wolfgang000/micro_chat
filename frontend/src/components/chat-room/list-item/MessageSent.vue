@@ -33,7 +33,6 @@ const props = defineProps<{
 }
 
 .msg-sent .body-container {
-  font-family: 'Proxima Nova Regular', sans-serif;
   background: #46468c;
   border-radius: 7px;
   font-size: 14px;
