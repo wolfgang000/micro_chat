@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { type IMessage, type IChatListItem, ChatListItemType, type IChatEvent } from '@/models'
-import { computed } from 'vue'
 import MessageReceived from './MessageReceived.vue'
 import MessageSent from './MessageSent.vue'
 import GeneralEvent from './GeneralEvent.vue'

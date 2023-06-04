@@ -54,7 +54,7 @@ test('Send messages from 2 different users', async ({ browser }) => {
   await expect(chatRoomPageUserDog.messageListContainer).toContainText('a-message-from-user-dog')
 })
 
-test('Check join and leave messages', async ({ browser }) => {
+test('Check user presence(join and leave messages)', async ({ browser }) => {
   const contextUserWolf = await browser.newContext()
   const pageUserWolf = await contextUserWolf.newPage()
   const loginPageUserWolf = new LoginPage(pageUserWolf)
@@ -94,5 +94,79 @@ test('Check join and leave messages', async ({ browser }) => {
 
   // Check UserWolf leave message on UserDog's tab
   await expect(chatRoomPageUserDog.messageListContainer).toContainText('UserWolf has left the room')
+  // ---------------------------------------------------
+})
+
+test('Check user presence(members online counter)', async ({ browser }) => {
+  const contextUserWolf = await browser.newContext()
+  const pageUserWolf = await contextUserWolf.newPage()
+  const loginPageUserWolf = new LoginPage(pageUserWolf)
+  const chatRoomPageUserWolf = new ChatRoomPage(pageUserWolf)
+
+  const contextUserDog = await browser.newContext()
+  const pageUserDog = await contextUserDog.newPage()
+  const loginPageUserDog = new LoginPage(pageUserDog)
+  const chatRoomPageUserDog = new ChatRoomPage(pageUserDog)
+
+  const roomId = v4()
+
+  // ---------------------------------------------------
+  // Check UserWolf members online counter
+  await chatRoomPageUserWolf.goto(roomId)
+  await loginPageUserWolf.performLogin('UserWolf')
+  await chatRoomPageUserWolf.validateCurrentUrl()
+  await expect(chatRoomPageUserWolf.membersOnlineButton).toContainText('1 Members online')
+
+  // Check UserDog members online counter
+  await chatRoomPageUserDog.goto(roomId)
+  await loginPageUserDog.performLogin('UserDog')
+  await chatRoomPageUserDog.validateCurrentUrl()
+  await expect(chatRoomPageUserDog.membersOnlineButton).toContainText('2 Members online')
+
+  // ---------------------------------------------------
+  // Close UserWolf tab
+  await contextUserWolf.close()
+
+  // Check UserDog members online counter after UserWolf departure
+  await expect(chatRoomPageUserDog.membersOnlineButton).toContainText('1 Members online')
+  // ---------------------------------------------------
+})
+
+test('Check user presence(members online modal)', async ({ browser }) => {
+  const contextUserWolf = await browser.newContext()
+  const pageUserWolf = await contextUserWolf.newPage()
+  const loginPageUserWolf = new LoginPage(pageUserWolf)
+  const chatRoomPageUserWolf = new ChatRoomPage(pageUserWolf)
+
+  const contextUserDog = await browser.newContext()
+  const pageUserDog = await contextUserDog.newPage()
+  const loginPageUserDog = new LoginPage(pageUserDog)
+  const chatRoomPageUserDog = new ChatRoomPage(pageUserDog)
+
+  const roomId = v4()
+
+  // ---------------------------------------------------
+  // Check UserWolf members online modal
+  await chatRoomPageUserWolf.goto(roomId)
+  await loginPageUserWolf.performLogin('UserWolf')
+  await chatRoomPageUserWolf.validateCurrentUrl()
+  await chatRoomPageUserWolf.openMembersOnlineModal()
+  await expect(chatRoomPageUserWolf.membersOnlineModal).toContainText('UserWolf')
+
+  // Check UserWolf members online modal
+  await chatRoomPageUserDog.goto(roomId)
+  await loginPageUserDog.performLogin('UserDog')
+  await chatRoomPageUserDog.validateCurrentUrl()
+  await chatRoomPageUserDog.openMembersOnlineModal()
+  await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserDog')
+  await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserWolf')
+  // Check UserDog presence on UserWolf's tab
+  await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserDog')
+
+  // ---------------------------------------------------
+  // Close UserWolf tab
+  await contextUserWolf.close()
+  // Check UserDog members online after UserWolf departure
+  await expect(chatRoomPageUserDog.membersOnlineModal).not.toContainText('UserWolf')
   // ---------------------------------------------------
 })

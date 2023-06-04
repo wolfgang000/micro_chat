@@ -15,7 +15,8 @@ import { roomStore } from '@/stores/room'
           type="button"
           class="btn btn-light"
           data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
+          data-bs-target="#membersOnlineModal"
+          id="membersOnlinebutton"
         >
           <span style="color: green" class="me-1">●</span>
           {{ roomStore.connectedUsers.length }} Members online
@@ -25,7 +26,7 @@ import { roomStore } from '@/stores/room'
     <!-- Modal -->
     <div
       class="modal fade"
-      id="exampleModal"
+      id="membersOnlineModal"
       tabindex="-1"
       aria-labelledby="membersOnlineModalLabel"
       aria-hidden="true"
