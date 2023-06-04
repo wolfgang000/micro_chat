@@ -54,21 +54,4 @@ const props = defineProps<{
 }
 
 /*********************/
-
-.msg-received {
-  display: flex;
-  padding-left: 1%;
-  padding-right: 15%;
-  align-self: flex-start;
-  width: 100%;
-}
-
-.msg-received .body-container {
-  font-family: 'Proxima Nova Regular', sans-serif;
-  background: #eaeaea;
-  border-radius: 7px;
-  color: #545454;
-  font-size: 14px;
-  align-self: inherit;
-}
 </style>

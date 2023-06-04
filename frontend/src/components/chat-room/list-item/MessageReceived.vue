@@ -36,25 +36,6 @@ const props = defineProps<{
 
 /*********************/
 
-.msg-sent {
-  display: flex;
-  padding-right: 1%;
-  padding-left: 15%;
-  align-self: flex-end;
-  width: 100%;
-}
-
-.msg-sent .body-container {
-  font-family: 'Proxima Nova Regular', sans-serif;
-  background: #46468c;
-  border-radius: 7px;
-  font-size: 14px;
-  color: #fff;
-  align-self: inherit;
-}
-
-/*********************/
-
 .msg-received {
   display: flex;
   padding-left: 1%;
