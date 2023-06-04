@@ -77,6 +77,7 @@ channel.on('presence_diff', (diff) => {
 channel
   .join()
   .receive('ok', (resp: any): void => {
+    roomStore.setRoomName(`#${roomId}`)
     console.log('Joined successfully', resp)
   })
   .receive('error', (resp: any): void => {

@@ -6,7 +6,11 @@ import { roomStore } from '@/stores/room'
   <div>
     <div class="contact-header d-flex align-items-center">
       <div class="d-flex justify-content-between" style="width: 100%; margin-right: 0.5rem">
-        <div class="d-flex align-items-center ms-2">H ghghg <i class="bi bi-dot"></i> hg h</div>
+        <div class="d-flex align-items-center ms-2">
+          <a href="#"
+            ><strong>{{ roomStore.roomName }}</strong></a
+          >
+        </div>
         <button
           type="button"
           class="btn btn-light"
