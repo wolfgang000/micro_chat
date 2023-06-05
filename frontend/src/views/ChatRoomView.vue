@@ -20,8 +20,12 @@ const roomId = route.params.roomId
 const channelName = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelName)
 
+const dateFormatWithFormat = (value: string | Date): string => {
+  return dateFormat(value, 'dddd, mmmm d, yyyy | h:MM TT')
+}
+
 channel.on('server.new_message', (message: IMessage) => {
-  message.created_at = dateFormat(message.created_at, 'dddd, mmmm d, yyyy | h:MM TT')
+  message.created_at = dateFormatWithFormat(message.created_at)
 
   const itemType =
     message.username === userStore.username
@@ -37,7 +41,7 @@ let onJoin = (id: any, current: any, newPres: any) => {
       type: ChatListItemType.ChatEvent,
       meta: {
         body: `${newPres.metas[0].username} has join the room`,
-        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
+        created_at: dateFormatWithFormat(Date())
       }
     })
   }
@@ -49,7 +53,7 @@ let onLeave = (id: any, current: any, leftPres: any) => {
       type: ChatListItemType.ChatEvent,
       meta: {
         body: `${leftPres.metas[0].username} has left the room`,
-        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
+        created_at: dateFormatWithFormat(Date())
       }
     })
   }
