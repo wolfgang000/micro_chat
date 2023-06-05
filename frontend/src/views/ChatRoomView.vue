@@ -2,14 +2,13 @@
 import { ref, onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
-import { ChatListItemType } from '@/models'
-import type { IMessage } from '@/models'
-import { userStore } from '@/stores/user'
-import { roomStore, setupChannelPresenceCallbacks } from '@/stores/room'
+import {
+  roomStore,
+  setupChannelPresenceCallbacks as setupRoomChannelCallbacks
+} from '@/stores/room'
 
 import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
-import dateFormat from 'dateformat'
 
 const message = ref('')
 const route = useRoute()
@@ -18,22 +17,7 @@ const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelTopic)
 
-const dateFormatWithFormat = (value: string | Date): string => {
-  return dateFormat(value, 'dddd, mmmm d, yyyy | h:MM TT')
-}
-
-socketConnection.channelOn(channelTopic, 'server.new_message', (message: IMessage) => {
-  message.created_at = dateFormatWithFormat(message.created_at)
-
-  const itemType =
-    message.username === userStore.username
-      ? ChatListItemType.MessageSent
-      : ChatListItemType.MessageReceived
-
-  roomStore.unshiftListItems({ type: itemType, meta: message })
-})
-
-setupChannelPresenceCallbacks(channelTopic)
+setupRoomChannelCallbacks(channelTopic)
 
 channel
   .join()

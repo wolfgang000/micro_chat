@@ -1,8 +1,9 @@
 import { socketConnection } from '@/api'
-import { ChatListItemType, type IChatListItem, type IConnectedUser } from '@/models'
+import { ChatListItemType, type IChatListItem, type IConnectedUser, type IMessage } from '@/models'
 import dateFormat from 'dateformat'
 import { Presence } from 'phoenix'
 import { reactive } from 'vue'
+import { userStore } from './user'
 
 export let roomPresences = {}
 export const roomStore = reactive({
@@ -52,6 +53,17 @@ const onLeave = (id: any, current: any, leftPres: any) => {
 }
 
 export const setupChannelPresenceCallbacks = (channelTopic: string) => {
+  socketConnection.channelOn(channelTopic, 'server.new_message', (message: IMessage) => {
+    message.created_at = dateFormatWithFormat(message.created_at)
+
+    const itemType =
+      message.username === userStore.username
+        ? ChatListItemType.MessageSent
+        : ChatListItemType.MessageReceived
+
+    roomStore.unshiftListItems({ type: itemType, meta: message })
+  })
+
   socketConnection.channelOn(channelTopic, 'presence_state', (state) => {
     roomPresences = {}
     roomPresences = Presence.syncState(roomPresences, state)
