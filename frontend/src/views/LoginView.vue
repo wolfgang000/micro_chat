@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { socketConnection } from '../api'
 import { useRouter, useRoute } from 'vue-router'
 import { userStore } from '../stores/user'
+import { Toast } from 'bootstrap'
 
 const LOCAL_STORAGE_USERNAME_KEY = 'username'
 
@@ -31,12 +32,31 @@ const onSubmit = () => {
         router.push({ name: 'create-room' })
       }
     })
-    .catch(() => console.log('unable to connect!'))
+    .catch(() => {
+      const toast = new Toast(document.getElementById('login_error_toast') as any)
+      toast.show()
+    })
 }
 </script>
 
 <template>
   <main>
+    <div className="toast-container position-fixed top-0 end-0 p-3">
+      <div
+        id="login_error_toast"
+        className="toast align-items-center text-bg-danger border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div className="d-flex">
+          <div className="toast-body">
+            There was a problem connecting to server, Unable to login
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container router-view-container">
       <div class="card">
         <div class="card-body">
