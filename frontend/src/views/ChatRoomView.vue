@@ -78,6 +78,7 @@ channel
   .join()
   .receive('ok', (resp: any): void => {
     roomStore.setRoomName(`#${roomId}`)
+    document.title = `Room #${roomId}`
     console.log('Joined successfully', resp)
   })
   .receive('error', (resp: any): void => {
