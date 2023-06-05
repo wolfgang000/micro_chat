@@ -3,76 +3,37 @@ import { ref, onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
 import { ChatListItemType } from '@/models'
-import type { IMessage, IChatListItem } from '@/models'
-import { Presence } from 'phoenix'
+import type { IMessage } from '@/models'
 import { userStore } from '@/stores/user'
-import { roomStore, roomPresences } from '@/stores/room'
+import { roomStore, setupChannelPresenceCallbacks } from '@/stores/room'
 
 import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
 import dateFormat from 'dateformat'
 
 const message = ref('')
-const listItems = ref([] as IChatListItem[])
-
 const route = useRoute()
-const roomId = route.params.roomId
-const channelName = `room:${roomId}`
-const channel = socketConnection.getOrCreateChannel(channelName)
 
-channel.on('server.new_message', (message: IMessage) => {
-  message.created_at = dateFormat(message.created_at, 'dddd, mmmm d, yyyy | h:MM TT')
+const roomId = route.params.roomId
+const channelTopic = `room:${roomId}`
+const channel = socketConnection.getOrCreateChannel(channelTopic)
+
+const dateFormatWithFormat = (value: string | Date): string => {
+  return dateFormat(value, 'dddd, mmmm d, yyyy | h:MM TT')
+}
+
+socketConnection.channelOn(channelTopic, 'server.new_message', (message: IMessage) => {
+  message.created_at = dateFormatWithFormat(message.created_at)
 
   const itemType =
     message.username === userStore.username
       ? ChatListItemType.MessageSent
       : ChatListItemType.MessageReceived
 
-  listItems.value.unshift({ type: itemType, meta: message })
+  roomStore.unshiftListItems({ type: itemType, meta: message })
 })
 
-let onJoin = (id: any, current: any, newPres: any) => {
-  if (!current) {
-    listItems.value.unshift({
-      type: ChatListItemType.ChatEvent,
-      meta: {
-        body: `${newPres.metas[0].username} has join the room`,
-        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
-      }
-    })
-  }
-}
-
-let onLeave = (id: any, current: any, leftPres: any) => {
-  if (current.metas.length === 0) {
-    listItems.value.unshift({
-      type: ChatListItemType.ChatEvent,
-      meta: {
-        body: `${leftPres.metas[0].username} has left the room`,
-        created_at: dateFormat(Date(), 'dddd, mmmm d, yyyy | h:MM TT')
-      }
-    })
-  }
-}
-
-channel.on('presence_state', (state) => {
-  roomStore.setRoomPresences({})
-
-  const presences = Presence.syncState(roomPresences, state)
-  roomStore.setRoomPresences(presences)
-  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
-    return user
-  })
-  roomStore.setConnectedUsers(connectedUsers)
-})
-
-channel.on('presence_diff', (diff) => {
-  const presences = Presence.syncDiff(roomPresences, diff, onJoin, onLeave)
-  const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
-    return user
-  })
-  roomStore.setConnectedUsers(connectedUsers)
-})
+setupChannelPresenceCallbacks(channelTopic)
 
 channel
   .join()
@@ -87,7 +48,7 @@ channel
   })
 
 onUnmounted(() => {
-  socketConnection.deleteChannel(channelName)
+  socketConnection.deleteChannel(channelTopic)
 })
 
 const onSubmit = () => {
@@ -99,7 +60,7 @@ const onSubmit = () => {
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <ChatHeader />
-    <ChatList :items="listItems" />
+    <ChatList :items="roomStore.listItems" />
     <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">
         <input
