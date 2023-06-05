@@ -1,5 +1,5 @@
 <p align=center>
-<img src="https://github.com/wolfgang000/micro_chat/assets/4041136/6f2d3aab-0f24-4bdb-ad15-dbf2f65bd045"/>
+<img src="https://github.com/wolfgang000/micro_chat/assets/4041136/196d0fbe-41be-4dd7-a74b-4d88c2d82b19"/>  
 </p>
 <p align=center>
   A simple chat app that does not save/track or monitor your messages.
