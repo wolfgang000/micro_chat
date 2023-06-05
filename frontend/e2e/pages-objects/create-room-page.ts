@@ -4,10 +4,16 @@ export class CreateRoomPage {
   readonly page: Page
   readonly pagePath = '/create-room'
   readonly createRoomButton: Locator
+  readonly createRoomToast: Locator
+  readonly goToRoomLink: Locator
+  readonly copyRoomLinkButton: Locator
 
   constructor(page: Page) {
     this.page = page
     this.createRoomButton = page.locator('#create_room_button')
+    this.createRoomToast = page.locator('#create_room_toast')
+    this.goToRoomLink = page.locator('#go_to_room_link')
+    this.copyRoomLinkButton = page.locator('#copy_room_link_button')
   }
 
   async goto() {
