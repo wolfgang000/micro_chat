@@ -103,3 +103,4 @@ dokku logs micro-chat-back
 - [ ] Add share url on create room
 - [ ] Add room name
 - [ ] Add validations to username
+- [ ] logo to login view

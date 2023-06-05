@@ -20,7 +20,7 @@ defmodule MicroChatWeb.RoomChannel do
     {:noreply, socket}
   end
 
-
+  @impl true
   def handle_info(:after_join, socket) do
     {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{
       username: socket.assigns.username,

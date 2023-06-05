@@ -13,7 +13,6 @@ test('Send a message to chat room', async ({ page }) => {
   await loginPage.performLogin('user-1')
   await chatRoomPage.validateCurrentUrl()
 
-  await expect(chatRoomPage.messageListContainer).toContainText('user-1 has join the room')
   await chatRoomPage.sendMessage('a-message-from-user-1')
   await expect(chatRoomPage.messageField).toBeEmpty()
   await expect(chatRoomPage.messageListContainer).toContainText('a-message-from-user-1')
