@@ -47,21 +47,25 @@ const onSubmit = () => {
       </div>
     </div>
 
-    <div class="container">
-      <div v-if="roomId">
-        <div>Your room is ready</div>
-        <div>Share this link with the the other participants</div>
-        <div class="text-link-container">
-          <div class="text-link p-2">
-            {{ roomUrl }}
-            <button
-              id="copy_room_link_button"
-              @click="copyUrlToClipboard"
-              type="button"
-              class="btn btn-light ms-3"
-            >
-              Copy
-            </button>
+    <div class="container mt-5">
+      <div v-if="roomId" class="">
+        <div class="mb-3">
+          <div>Your room is ready</div>
+          <div>Share this link with the other participants</div>
+        </div>
+        <div class="mb-3">
+          <div class="text-link-container d-inline-flex">
+            <div class="text-link p-2">
+              {{ roomUrl }}
+              <button
+                id="copy_room_link_button"
+                @click="copyUrlToClipboard"
+                type="button"
+                class="btn btn-light ms-3"
+              >
+                Copy
+              </button>
+            </div>
           </div>
         </div>
         <router-link

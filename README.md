@@ -100,7 +100,6 @@ dokku logs micro-chat-back
 - [ ] Add message insertion transition
 - [ ] Add frontend logger
 - [ ] Add 404 page
-- [ ] Add share url on create room
 - [ ] Add room name
 - [ ] Add validations to username
 - [ ] logo to login view
