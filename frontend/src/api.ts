@@ -50,6 +50,11 @@ class SocketConnection {
     }
   }
 
+  channelOn(topic: string, event: string, callback: (response?: any) => void): void {
+    const channel = this.#channels.get(topic) as Channel
+    channel.on(event, callback)
+  }
+
   deleteChannel(name: string): void {
     const channel = this.#channels.get(name)
     if (channel) {
