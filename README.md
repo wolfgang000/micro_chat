@@ -96,10 +96,8 @@ dokku logs micro-chat-back
 - [ ] Add video call with webrtc
 - [ ] Add captcha
 - [ ] Add credo + format validation
-- [ ] Add user present tracking(on typing)
-- [ ] Add message insertion transition
-- [ ] Add frontend logger
+- [ ] Add logger(front + back)
 - [ ] Add 404 page
 - [ ] Add room name
-- [ ] Add validations to username
+- [ ] Add validations to username(front + back)
 - [ ] logo to login view
