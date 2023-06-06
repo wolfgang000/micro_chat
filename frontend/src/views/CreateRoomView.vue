@@ -24,7 +24,7 @@ const toastMsg = ref('')
 router.resolve
 const onSubmit = () => {
   roomId.value = v4()
-  const roomRoute = router.resolve({ name: 'chat-room', params: { roomId: v4() } })
+  const roomRoute = router.resolve({ name: 'chat-room', params: { roomId: roomId.value } })
   roomUrl.value = `${window.location.origin}${roomRoute.href}`
 }
 </script>
