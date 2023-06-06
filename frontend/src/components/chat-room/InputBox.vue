@@ -7,7 +7,7 @@ const message = ref('')
 const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
 
 const typingTimeout = 2000
-let typingTimer: number | undefined
+let typingTimer = setTimeout(() => {})
 let isUserTyping = false
 
 const userStartsTyping = () => {
