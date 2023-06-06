@@ -7,6 +7,7 @@ import { userStore } from './user'
 
 export let roomPresences = {}
 export const roomStore = reactive({
+  roomTopic: '',
   roomName: '',
   connectedUsers: [] as IConnectedUser[],
   listItems: [] as IChatListItem[],
@@ -21,6 +22,9 @@ export const roomStore = reactive({
   },
   unshiftListItems(value: IChatListItem) {
     this.listItems.unshift(value)
+  },
+  setRoomTopic(value: string) {
+    this.roomTopic = value
   }
 })
 

@@ -16,6 +16,7 @@ const route = useRoute()
 
 const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
+roomStore.setRoomTopic(channelTopic)
 const channel = socketConnection.getOrCreateChannel(channelTopic)
 
 //--------------\
@@ -54,17 +55,24 @@ const onKeyDown = () => {
 
 setupRoomChannelCallbacks(channelTopic)
 
-channel
-  .join()
-  .receive('ok', (resp: any): void => {
-    roomStore.setRoomName(`#${roomId}`)
-    document.title = `Room #${roomId}`
-    console.log('Joined successfully', resp)
-  })
-  .receive('error', (resp: any): void => {
-    // TODO: handle failure
-    console.log('Unable to join', resp)
-  })
+// handle race condition here
+
+socketConnection.channelJoin(channelTopic).then(() => {
+  roomStore.setRoomName(`#${roomId}`)
+  document.title = `Room #${roomId}`
+})
+
+// channel
+//   .join()
+//   .receive('ok', (resp: any): void => {
+//     roomStore.setRoomName(`#${roomId}`)
+//     document.title = `Room #${roomId}`
+//     console.log('Joined successfully', resp)
+//   })
+//   .receive('error', (resp: any): void => {
+//     // TODO: handle failure
+//     console.log('Unable to join', resp)
+//   })
 
 onUnmounted(() => {
   socketConnection.deleteChannel(channelTopic)
@@ -80,7 +88,7 @@ const onSubmit = () => {
 <template>
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <ChatHeader />
-    <ChatList :items="roomStore.listItems" />
+    <ChatList />
     <TypingIndicator />
     <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">

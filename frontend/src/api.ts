@@ -55,6 +55,24 @@ class SocketConnection {
     channel.on(event, callback)
   }
 
+  channelJoin(topic: string): Promise<void> {
+    const channel = this.#channels.get(topic) as Channel
+
+    return new Promise<void>((resolve, reject) => {
+      channel
+        .join()
+        .receive('ok', (resp: any): void => {
+          resolve()
+          console.log('Joined successfully', resp)
+        })
+        .receive('error', (resp: any): void => {
+          // TODO: handle failure
+          reject()
+          console.log('Unable to join', resp)
+        })
+    })
+  }
+
   deleteChannel(name: string): void {
     const channel = this.#channels.get(name)
     if (channel) {
