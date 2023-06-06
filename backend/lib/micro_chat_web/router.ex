@@ -11,16 +11,19 @@ defmodule MicroChatWeb.Router do
 
   #####################
   forward(
-      "/api/health",
-      PlugCheckup,
-      PlugCheckup.Options.new(
-        json_encoder: Jason,
-        checks: [
-          %PlugCheckup.Check{name: "Dummy", module: MicroChatWeb.Healthchecks, function: :dummy_check}
-        ]
-      )
+    "/api/health",
+    PlugCheckup,
+    PlugCheckup.Options.new(
+      json_encoder: Jason,
+      checks: [
+        %PlugCheckup.Check{
+          name: "Dummy",
+          module: MicroChatWeb.Healthchecks,
+          function: :dummy_check
+        }
+      ]
     )
-
+  )
 
   # Enable LiveDashboard in development
   if Application.compile_env(:micro_chat, :dev_routes) do
