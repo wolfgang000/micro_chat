@@ -6,6 +6,36 @@ import { socketConnection } from '@/api'
 const message = ref('')
 const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
 
+const typingTimeout = 2000
+var typingTimer: number | undefined
+let isUserTyping = false
+
+const userStartsTyping = function () {
+  if (isUserTyping) {
+    return
+  }
+
+  isUserTyping = true
+  channel.push('user:typing', { typing: true })
+}
+
+const userStopsTyping = function () {
+  clearTimeout(typingTimer)
+  isUserTyping = false
+  channel.push('user:typing', { typing: false })
+}
+
+const onKeyUp = () => {
+  clearTimeout(typingTimer)
+  typingTimer = setTimeout(userStopsTyping, typingTimeout)
+}
+
+const onKeyDown = () => {
+  console.log('onKeyDown')
+  userStartsTyping()
+  clearTimeout(typingTimer)
+}
+
 const onSubmit = () => {
   userStopsTyping()
   channel.push('client.new_message', { body: message.value })
