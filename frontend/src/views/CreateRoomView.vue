@@ -88,7 +88,4 @@ const onSubmit = () => {
 .text-link-container {
   background: rgb(241, 243, 244);
 }
-
-.text-link {
-}
 </style>

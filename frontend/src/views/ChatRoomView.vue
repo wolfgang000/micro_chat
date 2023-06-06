@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { onUnmounted } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
 import {
@@ -21,6 +21,7 @@ roomStore.setRoomTopic(channelTopic)
 socketConnection.getOrCreateChannel(channelTopic)
 setupRoomChannelCallbacks(channelTopic)
 
+// handle race condition here
 socketConnection.channelJoin(channelTopic).then(() => {
   roomStore.setRoomName(`#${roomId}`)
   document.title = `Room #${roomId}`

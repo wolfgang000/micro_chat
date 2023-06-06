@@ -7,10 +7,10 @@ const message = ref('')
 const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
 
 const typingTimeout = 2000
-var typingTimer: number | undefined
+let typingTimer: number | undefined
 let isUserTyping = false
 
-const userStartsTyping = function () {
+const userStartsTyping = () => {
   if (isUserTyping) {
     return
   }
@@ -31,7 +31,6 @@ const onKeyUp = () => {
 }
 
 const onKeyDown = () => {
-  console.log('onKeyDown')
   userStartsTyping()
   clearTimeout(typingTimer)
 }
