@@ -46,6 +46,12 @@ jobs:
           mkdir -p deps
           mix deps.get
 
+      - name: Check format
+        run: mix format --check-formatted
+
+      - name: Check compile warnings
+        run: mix compile --warnings-as-errors
+
       - name: Run tests
         run: mix test
 

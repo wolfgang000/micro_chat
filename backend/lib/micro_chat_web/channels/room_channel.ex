@@ -9,13 +9,13 @@ defmodule MicroChatWeb.RoomChannel do
     {:ok, socket}
   end
 
-
   @impl true
   def handle_info(:after_join, socket) do
-    {:ok, _} = Presence.track(socket, socket.assigns.user_id, %{
-      id_typing: false,
-      username: socket.assigns.username,
-    })
+    {:ok, _} =
+      Presence.track(socket, socket.assigns.user_id, %{
+        id_typing: false,
+        username: socket.assigns.username
+      })
 
     push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
@@ -32,16 +32,14 @@ defmodule MicroChatWeb.RoomChannel do
     {:noreply, socket}
   end
 
-
   @impl true
   def handle_in("user:typing", %{"typing" => typing}, socket) do
-
-    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{
-      id_typing: typing,
-      username: socket.assigns.username,
-    })
+    {:ok, _} =
+      Presence.update(socket, socket.assigns.user_id, %{
+        id_typing: typing,
+        username: socket.assigns.username
+      })
 
     {:reply, :ok, socket}
   end
-
 end
