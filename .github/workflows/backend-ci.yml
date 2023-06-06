@@ -46,6 +46,9 @@ jobs:
           mkdir -p deps
           mix deps.get
 
+      - name: Check format
+        run: mix format --check-formatted
+
       - name: Run tests
         run: mix test
 
