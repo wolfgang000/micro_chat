@@ -171,3 +171,41 @@ test('Check user presence(members online modal)', async ({ browser }) => {
   await expect(chatRoomPageUserDog.membersOnlineModal).not.toContainText('UserWolf')
   // ---------------------------------------------------
 })
+
+test('Check user presence(typing indicator)', async ({ browser }) => {
+  const contextUserWolf = await browser.newContext()
+  const pageUserWolf = await contextUserWolf.newPage()
+  const loginPageUserWolf = new LoginPage(pageUserWolf)
+  const chatRoomPageUserWolf = new ChatRoomPage(pageUserWolf)
+
+  const contextUserDog = await browser.newContext()
+  const pageUserDog = await contextUserDog.newPage()
+  const loginPageUserDog = new LoginPage(pageUserDog)
+  const chatRoomPageUserDog = new ChatRoomPage(pageUserDog)
+
+  const roomId = v4()
+
+  // ---------------------------------------------------
+  await chatRoomPageUserWolf.goto(roomId)
+  await loginPageUserWolf.performLogin('UserWolf')
+  await chatRoomPageUserWolf.validateCurrentUrl()
+  // --
+  await chatRoomPageUserDog.goto(roomId)
+  await loginPageUserDog.performLogin('UserDog')
+  await chatRoomPageUserDog.validateCurrentUrl()
+  // ---------------------------------------------------
+
+  // type something in UserWolf tab
+  chatRoomPageUserWolf.messageField.type('test message')
+
+  // Check if UserWolf typing indicator message shows up on UserDog's tab
+  await expect(chatRoomPageUserDog.typingIndicatorContainer).toContainText('UserWolf is typing')
+
+  // Check if typing indicator message disappear after 2 sec of not typing
+  await expect(chatRoomPageUserDog.typingIndicatorContainer).not.toContainText(
+    'UserWolf is typing',
+    {
+      timeout: 5000
+    }
+  )
+})

@@ -10,7 +10,7 @@ const typingUsers = computed(() => {
 })
 </script>
 <template>
-  <div class="ps-3 pb-2">
+  <div class="ps-3 pb-2" id="typingIndicatorContainer">
     <div v-for="user in typingUsers">
       <span class="time_date"
         ><strong>{{ user.username }}</strong> is typing...
