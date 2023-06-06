@@ -23,4 +23,5 @@ export interface IChatListItem {
 export interface IConnectedUser {
   phx_ref: string
   username: string
+  id_typing: boolean
 }

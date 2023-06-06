@@ -9,6 +9,7 @@ import {
 
 import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
+import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
 
 const message = ref('')
 const route = useRoute()
@@ -16,6 +17,40 @@ const route = useRoute()
 const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
 const channel = socketConnection.getOrCreateChannel(channelTopic)
+
+//--------------\
+
+const typingTimeout = 2000
+var typingTimer: number | undefined
+let isUserTyping = false
+
+const userStartsTyping = function () {
+  if (isUserTyping) {
+    return
+  }
+
+  isUserTyping = true
+  channel.push('user:typing', { typing: true })
+}
+
+const userStopsTyping = function () {
+  clearTimeout(typingTimer)
+  isUserTyping = false
+  channel.push('user:typing', { typing: false })
+}
+
+const onKeyUp = () => {
+  clearTimeout(typingTimer)
+  typingTimer = setTimeout(userStopsTyping, typingTimeout)
+}
+
+const onKeyDown = () => {
+  console.log('onKeyDown')
+  userStartsTyping()
+  clearTimeout(typingTimer)
+}
+
+//---------------
 
 setupRoomChannelCallbacks(channelTopic)
 
@@ -36,6 +71,7 @@ onUnmounted(() => {
 })
 
 const onSubmit = () => {
+  userStopsTyping()
   channel.push('client.new_message', { body: message.value })
   message.value = ''
 }
@@ -45,6 +81,7 @@ const onSubmit = () => {
   <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
     <ChatHeader />
     <ChatList :items="roomStore.listItems" />
+    <TypingIndicator />
     <form @submit.prevent="onSubmit" autocomplete="off">
       <div class="input-group mb-3 px-3">
         <input
@@ -54,6 +91,8 @@ const onSubmit = () => {
           placeholder="Message"
           v-model="message"
           aria-describedby="send_msg_button"
+          @keydown="onKeyDown"
+          @keyup="onKeyUp"
           required
         />
         <button id="send_msg_button" class="btn btn-primary" type="submit">Send</button>
