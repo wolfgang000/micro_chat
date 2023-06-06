@@ -8,6 +8,7 @@ export class ChatRoomPage {
   readonly sendMessageButton: Locator
   readonly membersOnlineButton: Locator
   readonly membersOnlineModal: Locator
+  readonly typingIndicatorContainer: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -16,6 +17,7 @@ export class ChatRoomPage {
     this.sendMessageButton = page.locator('#send_msg_button')
     this.membersOnlineButton = page.locator('#membersOnlinebutton')
     this.membersOnlineModal = page.locator('#membersOnlineModal')
+    this.typingIndicatorContainer = page.locator('#typingIndicatorContainer')
   }
 
   async goto(roomId: string) {

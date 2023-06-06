@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { type IChatListItem } from '@/models'
+import { roomStore } from '@/stores/room'
 import ListItem from './list-item/ListItem.vue'
-
-const props = defineProps<{
-  items: IChatListItem[]
-}>()
 </script>
 
 <template>
   <div id="message_list" class="msg_history d-flex flex-column-reverse">
-    <ListItem v-for="(item, index) in items" v-bind:key="index" :item="item" />
+    <ListItem v-for="(item, index) in roomStore.listItems" v-bind:key="index" :item="item" />
   </div>
 </template>
 
