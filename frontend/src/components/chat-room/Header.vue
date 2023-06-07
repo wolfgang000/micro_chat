@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
 import IconPhone from '../icons/IconPhone.vue'
+import { socketConnection } from '@/api';
+const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
 
 const servers = {
   iceServers: [
@@ -66,28 +68,27 @@ const onCallButtonClick = async () => {
       webcamVideo.muted = true
       remoteVideo.srcObject = remoteStream
 
+      let candidates: RTCIceCandidate[] = []
       pc.onicecandidate = (event) => {
         console.log('event', event)
         if (event.candidate) {
           // channel.push('ice_candidate', { ice_candidate: event.candidate, type: 'caller' }, 10000)
-          console.log('Pushed caller ice candidate', event.candidate)
+          // console.log('Pushed caller ice candidate', event.candidate)
+          candidates.push(event.candidate)
+
+        } else {
+          console.log('Pushed', candidates)
+          channel.push('set.ice_candidates', { candidates: candidates })
         }
       }
 
       const offerDescription = await pc.createOffer()
-
-      // Set the offer Description as the local Description for the RTCPeerConnection
-      // This triggers the pc.onicecandidate that generates to ice candidates
       await pc.setLocalDescription(offerDescription)
-
-      // Create a JS object which contains the SDP offer data
       const offer = {
         sdp: offerDescription.sdp,
         type: offerDescription.type
       }
-
-      // Send the offer to the remote peer via the signaling server
-      // channel.push('offer', { offer }, 10000)
+      channel.push('set.offer', { offer: offer })
       console.log('Pushed offer from caller', offer)
     })
     .catch((error) => console.error('error', error))
@@ -99,21 +100,14 @@ const onCallButtonClick = async () => {
     <div class="contact-header d-flex align-items-center">
       <div class="d-flex justify-content-between" style="width: 100%; margin-right: 0.5rem">
         <div class="d-flex align-items-center ms-2">
-          <a href="#"
-            ><strong>{{ roomStore.roomName }}</strong></a
-          >
+          <a href="#"><strong>{{ roomStore.roomName }}</strong></a>
         </div>
         <div>
           <button type="button" class="btn btn-light me-2" @click="onCallButtonClick">
             <IconPhone />
           </button>
-          <button
-            type="button"
-            class="btn btn-light"
-            data-bs-toggle="modal"
-            data-bs-target="#membersOnlineModal"
-            id="membersOnlinebutton"
-          >
+          <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#membersOnlineModal"
+            id="membersOnlinebutton">
             <span style="color: green" class="me-1">●</span>
             {{ roomStore.connectedUsers.length }} Members online
           </button>
@@ -121,23 +115,13 @@ const onCallButtonClick = async () => {
       </div>
     </div>
     <!-- Modal -->
-    <div
-      class="modal fade"
-      id="membersOnlineModal"
-      tabindex="-1"
-      aria-labelledby="membersOnlineModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="membersOnlineModal" tabindex="-1" aria-labelledby="membersOnlineModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="membersOnlineModalLabel">Members online</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <ul class="list-group list-group-flush">

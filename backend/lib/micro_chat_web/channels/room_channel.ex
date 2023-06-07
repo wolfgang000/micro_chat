@@ -40,4 +40,19 @@ defmodule MicroChatWeb.RoomChannel do
 
     {:reply, :ok, socket}
   end
+
+  @impl true
+  def handle_in("set.ice_candidates", %{"candidates" => candidates}, socket) do
+    IO.inspect(candidates)
+    {:reply, :ok, socket}
+  end
+
+
+  @impl true
+  def handle_in("set.offer", %{"offer" => offer}, socket) do
+    IO.inspect(offer)
+    {:reply, :ok, socket}
+  end
+
+
 end
