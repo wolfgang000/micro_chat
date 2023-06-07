@@ -1,9 +1,19 @@
 defmodule MicroChatWeb.RoomChannel do
   use MicroChatWeb, :channel
   alias MicroChatWeb.Presence
+  alias MicroChat.RoomStore
 
   @impl true
-  def join("room:" <> _room_id, _payload, socket) do
+  def join(topic = "room:" <> room_id, _payload, socket) do
+    room =
+      case RoomStore.get_room(topic) do
+        {:ok, room} ->
+          room
+
+        {:error, :not_found} ->
+          RoomStore.add_room(topic, %{users: %{}})
+      end
+
     send(self(), :after_join)
 
     {:ok, socket}
@@ -18,6 +28,7 @@ defmodule MicroChatWeb.RoomChannel do
         username: socket.assigns.username
       })
 
+    RoomStore.add_user(socket.topic, socket.assigns.user_id)
     push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
@@ -43,16 +54,11 @@ defmodule MicroChatWeb.RoomChannel do
 
   @impl true
   def handle_in("set.ice_candidates", %{"candidates" => candidates}, socket) do
-    IO.inspect(candidates)
     {:reply, :ok, socket}
   end
-
 
   @impl true
   def handle_in("set.offer", %{"offer" => offer}, socket) do
-    IO.inspect(offer)
     {:reply, :ok, socket}
   end
-
-
 end
