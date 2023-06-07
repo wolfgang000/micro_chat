@@ -28,7 +28,6 @@ defmodule MicroChatWeb.RoomChannel do
         username: socket.assigns.username
       })
 
-    RoomStore.add_user(socket.topic, socket.assigns.user_id)
     push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
   end
@@ -53,12 +52,24 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("set.ice_candidates", %{"candidates" => candidates}, socket) do
+  def handle_in("user:typing", %{"typing" => typing}, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | id_typing: typing})
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in("set.ice_candidates", %{"ice_candidates" => ice_candidates}, socket) do
+    RoomStore.set_user_ice_candidates(socket.topic, socket.assigns.user_id, ice_candidates)
+
     {:reply, :ok, socket}
   end
 
   @impl true
   def handle_in("set.offer", %{"offer" => offer}, socket) do
+    RoomStore.set_user_offer(socket.topic, socket.assigns.user_id, offer)
+
     {:reply, :ok, socket}
   end
 end
