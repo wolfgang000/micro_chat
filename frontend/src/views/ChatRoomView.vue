@@ -33,16 +33,44 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
-    <ChatHeader />
-    <ChatList />
-    <TypingIndicator />
-    <InputBox />
+  <div class="d-flex flex-row justify-content-between">
+    <div class="">
+      <div class="videos">
+        <span>
+          <h3>Local Stream</h3>
+          <video id="webcamVideo" autoplay playsinline></video>
+        </span>
+        <span>
+          <h3>Remote Stream</h3>
+          <video id="remoteVideo" autoplay playsinline></video>
+        </span>
+      </div>
+    </div>
+
+    <div class="chat-room-main-container d-flex flex-column flex-grow-1" style="height: 100vh">
+      <ChatHeader />
+      <ChatList />
+      <TypingIndicator />
+      <InputBox />
+    </div>
   </div>
 </template>
 
 <style scoped>
 .chat-room-main-container {
   background: #f7f9fa;
+}
+
+video {
+  width: 400px;
+  height: 400px;
+  margin: 2rem;
+  background: #2c3e50;
+}
+
+.videos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
