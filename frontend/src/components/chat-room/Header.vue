@@ -2,11 +2,19 @@
 import { roomStore } from '@/stores/room'
 import IconPhone from '../icons/IconPhone.vue'
 import { useRoomStore } from '@/stores/roomPinia'
+import { computed } from 'vue'
 const roomStorePinia = useRoomStore()
 
-const onCallButtonClick = async () => {
-  roomStorePinia.activateVideoChat()
+const onStartCallButtonClick = async () => {
+  roomStorePinia.startCallAsCallerPart1()
 }
+const onJoinCallButtonClick = async () => {
+  // roomStorePinia.startCallAsCallerPart1()
+}
+
+const inCallUsers = computed(() => {
+  return roomStore.connectedUsers.filter((user) => user.is_in_call)
+})
 </script>
 
 <template>
@@ -20,13 +28,27 @@ const onCallButtonClick = async () => {
         </div>
         <div>
           <button
+            v-if="inCallUsers.length === 0"
             id="startCallButton"
             type="button"
             class="btn btn-light me-2"
-            @click="onCallButtonClick"
+            @click="onStartCallButtonClick"
+            :disabled="roomStorePinia.isVideoChatActivated"
           >
             <IconPhone />
           </button>
+          <button
+            v-if="inCallUsers.length > 0"
+            id="joinCallButton"
+            type="button"
+            class="btn btn-success me-2"
+            @click="onStartCallButtonClick"
+            :disabled="roomStorePinia.isVideoChatActivated"
+          >
+            <IconPhone class="me-2" />
+            Join Call
+          </button>
+
           <button
             type="button"
             class="btn btn-light"

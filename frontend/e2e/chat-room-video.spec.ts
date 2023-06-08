@@ -11,6 +11,7 @@ test('Start video call and wait for participants to join', async ({ page }) => {
   await chatRoomPage.goto(roomId)
   await loginPage.performLogin('user-1')
   await chatRoomPage.validateCurrentUrl()
+
   await chatRoomPage.startCallButton.click()
   await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
   // wait for mocked webcam video to loaded
@@ -21,4 +22,7 @@ test('Start video call and wait for participants to join', async ({ page }) => {
     }
   )
   expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+  await expect(chatRoomPage.startCallButton).not.toBeVisible()
+  await expect(chatRoomPage.joinCallButton).toBeDisabled()
+  await expect(chatRoomPage.inCallIndicatorContainer).toContainText('user-1')
 })

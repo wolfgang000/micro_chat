@@ -1,3 +1,4 @@
+import { socketConnection } from '@/api'
 import { defineStore } from 'pinia'
 
 export const useRoomStore = defineStore('room', {
@@ -5,17 +6,26 @@ export const useRoomStore = defineStore('room', {
     const videoElementCurrentUser: any = null
 
     return {
+      roomTopic: '',
       isVideoChatActivated: false,
+      wasVideoActivateByCurrentUser: false,
       videoElementCurrentUser: videoElementCurrentUser as HTMLVideoElement
     }
   },
   actions: {
+    setRoomTopic(value: string) {
+      this.roomTopic = value
+    },
+    startCallAsCallerPart1() {
+      this.activateVideoChat().then(() => {
+        this.isVideoChatActivated = true
+        this.wasVideoActivateByCurrentUser = true
+      })
+    },
     activateVideoChat() {
-      navigator.mediaDevices
+      return navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
-        .then(() => {
-          this.isVideoChatActivated = true
-        })
+        .then(() => {})
         .catch((error) => {
           console.log('error', error)
         })

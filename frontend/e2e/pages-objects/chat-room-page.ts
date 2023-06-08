@@ -12,6 +12,8 @@ export class ChatRoomPage {
   //------
   readonly startCallButton: Locator
   readonly currentUserVideoElement: Locator
+  readonly joinCallButton: Locator
+  readonly inCallIndicatorContainer: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -23,6 +25,8 @@ export class ChatRoomPage {
     this.typingIndicatorContainer = page.locator('#typingIndicatorContainer')
     this.startCallButton = page.locator('#startCallButton')
     this.currentUserVideoElement = page.locator('#currentUserVideoElement')
+    this.joinCallButton = page.locator('#joinCallButton')
+    this.inCallIndicatorContainer = page.locator('#InCallIndicatorContainer')
   }
 
   async goto(roomId: string) {

@@ -7,7 +7,6 @@ import { userStore } from './user'
 
 export let roomPresences = {}
 export const roomStore = reactive({
-  roomTopic: '',
   roomName: '',
   isVideoChatActivated: false,
   connectedUsers: [] as IConnectedUser[],
@@ -23,9 +22,6 @@ export const roomStore = reactive({
   },
   unshiftListItems(value: IChatListItem) {
     this.listItems.unshift(value)
-  },
-  setRoomTopic(value: string) {
-    this.roomTopic = value
   },
   setIsVideoChatActivated(value: boolean) {
     this.isVideoChatActivated = value

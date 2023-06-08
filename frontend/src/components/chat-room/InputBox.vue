@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { roomStore } from '@/stores/room'
 import { socketConnection } from '@/api'
+import { useRoomStore } from '@/stores/roomPinia'
+const roomStorePinia = useRoomStore()
 
 const message = ref('')
-const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
+const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
 
 const typingTimeout = 2000
 let typingTimer = setTimeout(() => {})

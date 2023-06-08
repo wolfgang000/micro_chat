@@ -11,6 +11,7 @@ import VideoChat from '@/components/chat-room/Video.vue'
 import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
 import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
+import InCallIndicator from '@/components/chat-room/InCallIndicator.vue'
 import InputBox from '@/components/chat-room/InputBox.vue'
 import { useRoomStore } from '@/stores/roomPinia'
 
@@ -20,7 +21,7 @@ const route = useRoute()
 const hasJoinedTheChannel = ref(false)
 const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
-roomStore.setRoomTopic(channelTopic)
+roomStorePinia.setRoomTopic(channelTopic)
 
 socketConnection.getOrCreateChannel(channelTopic)
 setupRoomChannelCallbacks(channelTopic)
@@ -45,6 +46,7 @@ onUnmounted(() => {
     </div>
     <div class="chat-room-main-container d-flex flex-column flex-grow-1" style="height: 100vh">
       <ChatHeader />
+      <InCallIndicator />
       <ChatList />
       <TypingIndicator />
       <InputBox />

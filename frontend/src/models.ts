@@ -24,4 +24,5 @@ export interface IConnectedUser {
   phx_ref: string
   username: string
   id_typing: boolean
+  is_in_call: boolean
 }

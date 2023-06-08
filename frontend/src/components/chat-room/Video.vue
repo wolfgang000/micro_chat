@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoomStore } from '@/stores/roomPinia'
+import { socketConnection } from '@/api'
 const roomStorePinia = useRoomStore()
 const videoCurrentUser = ref<HTMLVideoElement>()
 
 onMounted(() => {
   roomStorePinia.setVideoElementCurrentUser(videoCurrentUser.value!)
+  console.log(roomStorePinia.wasVideoActivateByCurrentUser)
+  if (roomStorePinia.wasVideoActivateByCurrentUser) {
+    const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
+    channel.push('start_call', {})
+  }
 })
 </script>
 
