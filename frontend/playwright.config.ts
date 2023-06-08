@@ -49,7 +49,11 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        permissions: ['microphone', 'camera']
+        permissions: ['microphone', 'camera'],
+        headless: false,
+        launchOptions: {
+          args: [!!process.env.CI ? '--headless=new' : '', '--use-fake-device-for-media-stream']
+        }
       }
     },
     // TODO: Review this later, Ignore video chat tests for now, until better support for camera is available
