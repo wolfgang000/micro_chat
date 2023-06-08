@@ -70,13 +70,9 @@ const onCallButtonClick = async () => {
 
       let candidates: RTCIceCandidate[] = []
       pc.onicecandidate = (event) => {
-        console.log('event', event)
         if (event.candidate) {
-          // channel.push('ice_candidate', { ice_candidate: event.candidate, type: 'caller' }, 10000)
-          // console.log('Pushed caller ice candidate', event.candidate)
           candidates.push(event.candidate)
         } else {
-          console.log('Pushed', candidates)
           channel.push('set.ice_candidates', { ice_candidates: candidates })
         }
       }
@@ -88,7 +84,7 @@ const onCallButtonClick = async () => {
         type: offerDescription.type
       }
       channel.push('set.offer', { offer: offer })
-      console.log('Pushed offer from caller', offer)
+      channel.push('user:in_call', { in_call: true })
     })
     .catch((error) => console.error('error', error))
 }
