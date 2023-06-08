@@ -3,7 +3,7 @@ import { LoginPage } from './pages-objects/login-page'
 import { ChatRoomPage } from './pages-objects/chat-room-page'
 import { v4 } from 'uuid'
 
-test('Send a message to chat room', async ({ page }) => {
+test('Start video call and wait for participants to join', async ({ page }) => {
   const loginPage = new LoginPage(page)
   const chatRoomPage = new ChatRoomPage(page)
   const roomId = v4()
