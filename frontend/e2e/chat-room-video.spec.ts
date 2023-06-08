@@ -13,4 +13,12 @@ test('Send a message to chat room', async ({ page }) => {
   await chatRoomPage.validateCurrentUrl()
   await chatRoomPage.startCallButton.click()
   await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
+  // wait for mocked webcam video to loaded
+  await page.waitForTimeout(10)
+  const currentUserVideoElementCurrentTime = await chatRoomPage.currentUserVideoElement.evaluate(
+    (e: HTMLVideoElement) => {
+      return (e as HTMLVideoElement).currentTime
+    }
+  )
+  expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
 })
