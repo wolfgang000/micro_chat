@@ -9,7 +9,7 @@ const onStartCallButtonClick = async () => {
   roomStorePinia.startCallAsCallerPart1()
 }
 const onJoinCallButtonClick = async () => {
-  // roomStorePinia.startCallAsCallerPart1()
+  roomStorePinia.joinCallAsCalleePart1()
 }
 
 const inCallUsers = computed(() => {
@@ -42,7 +42,7 @@ const inCallUsers = computed(() => {
             id="joinCallButton"
             type="button"
             class="btn btn-success me-2"
-            @click="onStartCallButtonClick"
+            @click="onJoinCallButtonClick"
             :disabled="roomStorePinia.isVideoChatActivated"
           >
             <IconPhone class="me-2" />

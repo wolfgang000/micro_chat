@@ -7,10 +7,12 @@ const videoCurrentUser = ref<HTMLVideoElement>()
 
 onMounted(() => {
   roomStorePinia.setVideoElementCurrentUser(videoCurrentUser.value!)
-  console.log(roomStorePinia.wasVideoActivateByCurrentUser)
+  const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
+
   if (roomStorePinia.wasVideoActivateByCurrentUser) {
-    const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
     channel.push('start_call', {})
+  } else {
+    channel.push('join_call', {})
   }
 })
 </script>

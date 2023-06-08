@@ -22,6 +22,12 @@ export const useRoomStore = defineStore('room', {
         this.wasVideoActivateByCurrentUser = true
       })
     },
+    joinCallAsCalleePart1() {
+      this.activateVideoChat().then(() => {
+        this.isVideoChatActivated = true
+        this.wasVideoActivateByCurrentUser = false
+      })
+    },
     activateVideoChat() {
       return navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
