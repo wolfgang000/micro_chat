@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
+import IconPhone from '../icons/IconPhone.vue'
+import { useRoomStore } from '@/stores/roomPinia'
+const roomStorePinia = useRoomStore()
+
+const onCallButtonClick = async () => {
+  roomStorePinia.activateVideoChat()
+}
 </script>
 
 <template>
@@ -11,16 +18,26 @@ import { roomStore } from '@/stores/room'
             ><strong>{{ roomStore.roomName }}</strong></a
           >
         </div>
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-toggle="modal"
-          data-bs-target="#membersOnlineModal"
-          id="membersOnlinebutton"
-        >
-          <span style="color: green" class="me-1">●</span>
-          {{ roomStore.connectedUsers.length }} Members online
-        </button>
+        <div>
+          <button
+            id="startCallButton"
+            type="button"
+            class="btn btn-light me-2"
+            @click="onCallButtonClick"
+          >
+            <IconPhone />
+          </button>
+          <button
+            type="button"
+            class="btn btn-light"
+            data-bs-toggle="modal"
+            data-bs-target="#membersOnlineModal"
+            id="membersOnlinebutton"
+          >
+            <span style="color: green" class="me-1">●</span>
+            {{ roomStore.connectedUsers.length }} Members online
+          </button>
+        </div>
       </div>
     </div>
     <!-- Modal -->

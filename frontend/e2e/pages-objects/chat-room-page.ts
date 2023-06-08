@@ -9,6 +9,9 @@ export class ChatRoomPage {
   readonly membersOnlineButton: Locator
   readonly membersOnlineModal: Locator
   readonly typingIndicatorContainer: Locator
+  //------
+  readonly startCallButton: Locator
+  readonly currentUserVideoElement: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -18,6 +21,8 @@ export class ChatRoomPage {
     this.membersOnlineButton = page.locator('#membersOnlinebutton')
     this.membersOnlineModal = page.locator('#membersOnlineModal')
     this.typingIndicatorContainer = page.locator('#typingIndicatorContainer')
+    this.startCallButton = page.locator('#startCallButton')
+    this.currentUserVideoElement = page.locator('#currentUserVideoElement')
   }
 
   async goto(roomId: string) {
