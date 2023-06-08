@@ -4,8 +4,9 @@ import { Toast } from 'bootstrap'
 import { v4 } from 'uuid'
 import { ref } from 'vue'
 
+const createRoomToast = ref<Element>()
 const copyUrlToClipboard = async () => {
-  const toast = new Toast(document.getElementById('create_room_toast') as any)
+  const toast = new Toast(createRoomToast.value!)
   try {
     await navigator.clipboard.writeText(roomUrl.value)
     toastMsg.value = 'Copied room link'
@@ -33,6 +34,7 @@ const onSubmit = () => {
   <main>
     <div className="toast-container position-fixed top-0 end-0 p-3">
       <div
+        ref="createRoomToast"
         id="create_room_toast"
         className="toast align-items-center text-bg-light border-0"
         role="alert"

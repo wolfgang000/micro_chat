@@ -6,11 +6,11 @@ import { userStore } from '../stores/user'
 import { Toast } from 'bootstrap'
 
 const LOCAL_STORAGE_USERNAME_KEY = 'username'
-
 const localStorageUsername = localStorage.getItem(LOCAL_STORAGE_USERNAME_KEY)
 
 const username = ref(localStorageUsername || '')
 const rememberMeCheck = ref(Boolean(localStorageUsername))
+const loginErrorToast = ref<Element>()
 
 const router = useRouter()
 const route = useRoute()
@@ -33,7 +33,7 @@ const onSubmit = () => {
       }
     })
     .catch(() => {
-      const toast = new Toast(document.getElementById('login_error_toast') as any)
+      const toast = new Toast(loginErrorToast.value!)
       toast.show()
     })
 }
@@ -43,6 +43,7 @@ const onSubmit = () => {
   <main>
     <div className="toast-container position-fixed top-0 end-0 p-3">
       <div
+        ref="loginErrorToast"
         id="login_error_toast"
         className="toast align-items-center text-bg-danger border-0"
         role="alert"
