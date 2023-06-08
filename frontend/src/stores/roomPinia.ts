@@ -39,11 +39,12 @@ export const useRoomStore = defineStore('room', {
     setVideoElementCurrentUser(value: HTMLVideoElement) {
       this.videoElementCurrentUser = value
 
-      navigator.mediaDevices
+      return navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
-        .then(async (localStream) => {
+        .then((localStream) => {
           this.videoElementCurrentUser.srcObject = localStream
           this.videoElementCurrentUser.muted = true
+          return localStream
         })
     }
   }
