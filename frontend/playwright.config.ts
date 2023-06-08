@@ -52,17 +52,20 @@ const config: PlaywrightTestConfig = {
         permissions: ['microphone', 'camera']
       }
     },
+    // TODO: Review this later, Ignore video chat tests for now, until better support for camera is available
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: '**video**'
     },
     {
       name: 'webkit',
       use: {
         ...devices['Desktop Safari']
-      }
+      },
+      testIgnore: '**video**'
     }
 
     /* Test against mobile viewports. */

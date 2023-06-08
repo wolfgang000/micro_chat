@@ -11,7 +11,6 @@ test('Send a message to chat room', async ({ page }) => {
   await chatRoomPage.goto(roomId)
   await loginPage.performLogin('user-1')
   await chatRoomPage.validateCurrentUrl()
-  await page.context().grantPermissions(['camera', 'microphone'])
   await chatRoomPage.startCallButton.click()
   await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
 })
