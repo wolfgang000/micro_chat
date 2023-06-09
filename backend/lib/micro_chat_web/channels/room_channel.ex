@@ -100,13 +100,12 @@ defmodule MicroChatWeb.RoomChannel do
   @impl true
   def handle_in(
         event = "answer:" <> _username,
-        %{"answer" => answer, "ice_candidates" => ice_candidates},
+        %{"answer" => answer},
         socket
       ) do
     broadcast_from(socket, event, %{
       username: socket.assigns.username,
-      answer: answer,
-      ice_candidates: ice_candidates
+      answer: answer
     })
 
     {:noreply, socket}
@@ -115,13 +114,12 @@ defmodule MicroChatWeb.RoomChannel do
   @impl true
   def handle_in(
         event = "offer:" <> _username,
-        %{"offer" => offer, "ice_candidates" => ice_candidates},
+        %{"offer" => offer},
         socket
       ) do
     broadcast_from(socket, event, %{
       username: socket.assigns.username,
-      offer: offer,
-      ice_candidates: ice_candidates
+      offer: offer
     })
 
     {:noreply, socket}

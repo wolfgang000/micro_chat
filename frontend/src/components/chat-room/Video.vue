@@ -106,21 +106,13 @@ onMounted(async () => {
         type: offerDescription.type
       }
 
-      channel.push(`offer:${peer.username}`, { offer: offer, ice_candidates: [] })
+      channel.push(`offer:${peer.username}`, { offer: offer })
     })
   }
 
   channel.on(
     `offer:${userStore.username}`,
-    async ({
-      offer: offer,
-      ice_candidates: peerIceCandidates,
-      username: username
-    }: {
-      offer: any
-      ice_candidates: any[]
-      username: string
-    }) => {
+    async ({ offer: offer, username: username }: { offer: any; username: string }) => {
       // asume 1 connection
       const localStream = await promise
       const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
@@ -185,33 +177,14 @@ onMounted(async () => {
       }
 
       // Send the answer to the signaling server which further sends it to the caller
-      channel.push(`answer:${peer.username}`, { answer, ice_candidates: [] })
-
-      peerIceCandidates.forEach((candidate) => {
-        console.log('Adding caller ice candidate', candidate)
-        const ice_candidate = new RTCIceCandidate(candidate)
-        peer.pc.addIceCandidate(ice_candidate)
-      })
+      channel.push(`answer:${peer.username}`, { answer })
     }
   )
 
   channel.on(
     `answer:${userStore.username}`,
-    ({
-      answer,
-      ice_candidates: peerIceCandidates,
-      username
-    }: {
-      answer: any
-      ice_candidates: any[]
-      username: string
-    }) => {
+    ({ answer, username }: { answer: any; username: string }) => {
       const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
-
-      peerIceCandidates.forEach((candidate) => {
-        const ice_candidate = new RTCIceCandidate(candidate)
-        peer.pc.addIceCandidate(ice_candidate)
-      })
 
       const answerDescription = new RTCSessionDescription(answer)
       peer.pc.setRemoteDescription(answerDescription)
