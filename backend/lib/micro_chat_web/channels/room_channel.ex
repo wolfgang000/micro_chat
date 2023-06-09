@@ -69,6 +69,18 @@ defmodule MicroChatWeb.RoomChannel do
 
   @impl true
   def handle_in(
+        "join_call-1",
+        _payload,
+        socket
+      ) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_in_call: true})
+
+    {:reply, {:ok, %{connected: "private", from: "server", body: 123}}, socket}
+  end
+
+  @impl true
+  def handle_in(
         "join_call",
         %{"offer" => offer, "ice_candidates" => ice_candidates} = payload,
         socket
@@ -91,9 +103,26 @@ defmodule MicroChatWeb.RoomChannel do
         %{"answer" => answer, "ice_candidates" => ice_candidates},
         socket
       ) do
+    broadcast_from(socket, event, %{
+      username: socket.assigns.username,
+      answer: answer,
+      ice_candidates: ice_candidates
+    })
 
-    IO.inspect(event, label: :broadcast_from)
-    broadcast_from(socket, event, %{answer: answer, ice_candidates: ice_candidates})
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_in(
+        event = "offer:" <> _username,
+        %{"answer" => offer, "ice_candidates" => ice_candidates},
+        socket
+      ) do
+    broadcast_from(socket, event, %{
+      username: socket.assigns.username,
+      offer: offer,
+      ice_candidates: ice_candidates
+    })
 
     {:noreply, socket}
   end

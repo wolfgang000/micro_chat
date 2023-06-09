@@ -3,8 +3,16 @@ import { ref, onMounted, nextTick } from 'vue'
 import { useRoomStore } from '@/stores/roomPinia'
 import { socketConnection } from '@/api'
 import { userStore } from '@/stores/user'
+import { roomStore } from '@/stores/room'
 
-const peers = ref([] as any[])
+const peers = ref(
+  [] as {
+    remoteStream: any
+    username: string
+    pc: any
+    element_id: string
+  }[]
+)
 
 const roomStorePinia = useRoomStore()
 const videoCurrentUser = ref<HTMLVideoElement>()
@@ -18,7 +26,7 @@ const servers = {
   iceCandidatePoolSize: 10
 }
 // Global State
-let pc = new RTCPeerConnection(servers)
+// let pc = new RTCPeerConnection(servers)
 // let localStream = null
 // let remoteStream: MediaStream | null = null
 
@@ -30,7 +38,7 @@ onMounted(async () => {
     channel.push('start_call', {})
 
     channel.on(
-      'a_user_has_joined_the_call',
+      `offer:${userStore.username}`,
       async ({
         offer: offer,
         ice_candidates: peerIceCandidates,
@@ -93,7 +101,6 @@ onMounted(async () => {
 
         // Send the answer to the signaling server which further sends it to the caller
         channel.push(`answer:${peer.username}`, { answer, ice_candidates: iceCandidates })
-        console.log('push answer:${userStore.username')
 
         peerIceCandidates.forEach((candidate) => {
           console.log('Adding caller ice candidate', candidate)
@@ -103,55 +110,72 @@ onMounted(async () => {
       }
     )
   } else {
-    // asume 1 connection
     const localStream = await promise
-    // Push tracks from your local stream to the peer connection
-    localStream.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream)
-    })
+    const inCallUsers = roomStore.connectedUsers.filter((user) => user.is_in_call)
+    channel.push('join_call-1', {}).receive('ok', (reply) => console.log('got reply', reply))
 
-    // Set up an event listener to pull tracks from the remote peer stream when they are available
-    // pc.ontrack = (event) => {
-    //   event.streams[0].getTracks().forEach((track) => {
-    //     remoteStream!.addTrack(track)
-    //   })
-    // }
-
-    const iceCandidatesPromise = new Promise<RTCIceCandidate[]>((resolve, reject) => {
-      const candidates: RTCIceCandidate[] = []
-      pc.onicecandidate = (event) => {
-        if (event.candidate) {
-          candidates.push(event.candidate)
-        } else {
-          resolve(candidates)
-        }
+    inCallUsers.forEach(async (user) => {
+      const peer = {
+        remoteStream: new MediaStream(),
+        username: user.username,
+        pc: new RTCPeerConnection(servers),
+        element_id: `remote-user-${user.username}`
       }
+      // Push tracks from your local stream to the peer connection
+      localStream.getTracks().forEach((track) => {
+        peer.pc.addTrack(track, localStream)
+      })
+
+      // Set up an event listener to pull tracks from the remote peer stream when they are available
+      // pc.ontrack = (event) => {
+      //   event.streams[0].getTracks().forEach((track) => {
+      //     remoteStream!.addTrack(track)
+      //   })
+      // }
+
+      const iceCandidatesPromise = new Promise<RTCIceCandidate[]>(async (resolve, reject) => {
+        const candidates: RTCIceCandidate[] = []
+        peer.pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            candidates.push(event.candidate)
+          } else {
+            resolve(candidates)
+          }
+        }
+
+        const offerDescription = await peer.pc.createOffer()
+        await peer.pc.setLocalDescription(offerDescription)
+        const iceCandidates = await iceCandidatesPromise
+        const offer = {
+          sdp: offerDescription.sdp,
+          type: offerDescription.type
+        }
+
+        peers.value.push(peer)
+        channel.push(`offer:${peer.username}`, { offer: offer, ice_candidates: iceCandidates })
+      })
     })
-
-    const offerDescription = await pc.createOffer()
-    await pc.setLocalDescription(offerDescription)
-    const iceCandidates = await iceCandidatesPromise
-    const offer = {
-      sdp: offerDescription.sdp,
-      type: offerDescription.type
-    }
-
-    channel.push('join_call', { offer: offer, ice_candidates: iceCandidates })
 
     channel.on(
       `answer:${userStore.username}`,
-      ({ answer, ice_candidates: peerIceCandidates }: { answer: any; ice_candidates: any[] }) => {
-        console.log('On answer:${userStore.username')
-
-        console.log('Received answer from callee', answer)
+      ({
+        answer,
+        ice_candidates: peerIceCandidates,
+        username
+      }: {
+        answer: any
+        ice_candidates: any[]
+        username: string
+      }) => {
+        const peer = peers.value.find((peer) => peer.username === username)!
 
         peerIceCandidates.forEach((candidate) => {
           const ice_candidate = new RTCIceCandidate(candidate)
-          pc.addIceCandidate(ice_candidate)
+          peer.pc.addIceCandidate(ice_candidate)
         })
 
         const answerDescription = new RTCSessionDescription(answer)
-        pc.setRemoteDescription(answerDescription)
+        peer.pc.setRemoteDescription(answerDescription)
       }
     )
   }
