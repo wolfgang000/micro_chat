@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRoomStore } from '@/stores/roomPinia'
 import { socketConnection } from '@/api'
+
+const peers = ref([] as any[])
+
 const roomStorePinia = useRoomStore()
 const videoCurrentUser = ref<HTMLVideoElement>()
-const videoRemoteUser = ref<HTMLVideoElement>()
 
 const servers = {
   iceServers: [
@@ -30,32 +32,45 @@ onMounted(async () => {
       'a_user_has_joined_the_call',
       async ({
         offer: offer,
-        ice_candidates: peerIceCandidates
+        ice_candidates: peerIceCandidates,
+        username: username
       }: {
         offer: any
         ice_candidates: any[]
+        username: string
       }) => {
         // asume 1 connection
         const localStream = await promise
-        const remoteStream = new MediaStream()
+        const peer = {
+          remoteStream: new MediaStream(),
+          username,
+          pc: new RTCPeerConnection(servers),
+          element_id: `remote-user-${username}`
+        }
+
         // Push tracks from your local stream to the peer connection
         localStream.getTracks().forEach((track) => {
-          pc.addTrack(track, localStream)
+          peer.pc.addTrack(track, localStream)
         })
 
         // Set up an event listener to pull tracks from the remote peer stream when they are available
-        pc.ontrack = (event) => {
+
+        peer.pc.ontrack = (event) => {
           event.streams[0].getTracks().forEach((track) => {
-            remoteStream.addTrack(track)
+            peer.remoteStream.addTrack(track)
           })
         }
-        if (videoRemoteUser.value) {
-          videoRemoteUser.value.srcObject = remoteStream
+
+        peers.value.push(peer)
+        await nextTick()
+        const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
+        if (videoRemoteUser) {
+          videoRemoteUser.srcObject = peer.remoteStream
         }
 
         const iceCandidatesPromise = new Promise<RTCIceCandidate[]>((resolve, reject) => {
           const candidates: RTCIceCandidate[] = []
-          pc.onicecandidate = (event) => {
+          peer.pc.onicecandidate = (event) => {
             if (event.candidate) {
               candidates.push(event.candidate)
             } else {
@@ -64,9 +79,9 @@ onMounted(async () => {
           }
         })
 
-        await pc.setRemoteDescription(new RTCSessionDescription(offer))
-        const answerDescription = await pc.createAnswer()
-        await pc.setLocalDescription(answerDescription)
+        await peer.pc.setRemoteDescription(new RTCSessionDescription(offer))
+        const answerDescription = await peer.pc.createAnswer()
+        await peer.pc.setLocalDescription(answerDescription)
 
         // Create an object which contains the SDP answer data
         const iceCandidates = await iceCandidatesPromise
@@ -81,7 +96,7 @@ onMounted(async () => {
         peerIceCandidates.forEach((candidate) => {
           console.log('Adding caller ice candidate', candidate)
           const ice_candidate = new RTCIceCandidate(candidate)
-          pc.addIceCandidate(ice_candidate)
+          peer.pc.addIceCandidate(ice_candidate)
         })
       }
     )
@@ -146,15 +161,9 @@ onMounted(async () => {
       <video id="currentUserVideoElement" ref="videoCurrentUser" autoplay playsinline></video>
     </span>
     <div id="remoteUsersVideoContainer">
-      <span>
+      <span v-for="(peer, index) in peers">
         <h3>Local Stream</h3>
-        <video
-          id="remoteUserVideoElement"
-          class="remote-user"
-          ref="videoRemoteUser"
-          autoplay
-          playsinline
-        ></video>
+        <video :id="peer.element_id" class="remote-user" autoplay playsinline></video>
       </span>
     </div>
   </div>
