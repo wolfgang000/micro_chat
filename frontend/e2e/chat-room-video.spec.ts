@@ -13,7 +13,7 @@ test('Start video call and wait for participants to join', async ({ browser }) =
   await chatRoomPage.startCallButton.click()
   await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
   // wait for mocked webcam video to loaded
-  await page.waitForTimeout(10)
+  await page.waitForTimeout(50)
   const currentUserVideoElementCurrentTime = await chatRoomPage.currentUserVideoElement.evaluate(
     (e: HTMLVideoElement) => {
       return (e as HTMLVideoElement).currentTime
