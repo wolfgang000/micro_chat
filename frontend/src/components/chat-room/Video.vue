@@ -9,10 +9,20 @@ const peers = ref(
   [] as {
     remoteStream: any
     username: string
-    pc: any
+    pc: RTCPeerConnection
     element_id: string
   }[]
 )
+
+const createPeer = (username: string) => {
+  const peer = {
+    remoteStream: new MediaStream(),
+    username: username,
+    pc: new RTCPeerConnection(servers),
+    element_id: `remote-user-${username}`
+  }
+  return peer
+}
 
 const roomStorePinia = useRoomStore()
 const videoCurrentUser = ref<HTMLVideoElement>()
@@ -38,12 +48,9 @@ onMounted(async () => {
     channel.push('join_call-1', {}).receive('ok', (reply) => console.log('got reply', reply))
 
     inCallUsers.forEach(async (user) => {
-      const peer = {
-        remoteStream: new MediaStream(),
-        username: user.username,
-        pc: new RTCPeerConnection(servers),
-        element_id: `remote-user-${user.username}`
-      }
+      const peer =
+        peers.value.find((peer) => peer.username === user.username) || createPeer(user.username)
+
       // Push tracks from your local stream to the peer connection
       localStream.getTracks().forEach((track) => {
         peer.pc.addTrack(track, localStream)
@@ -99,12 +106,7 @@ onMounted(async () => {
     }) => {
       // asume 1 connection
       const localStream = await promise
-      const peer = {
-        remoteStream: new MediaStream(),
-        username,
-        pc: new RTCPeerConnection(servers),
-        element_id: `remote-user-${username}`
-      }
+      const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
 
       // Push tracks from your local stream to the peer connection
       localStream.getTracks().forEach((track) => {
@@ -170,7 +172,7 @@ onMounted(async () => {
       ice_candidates: any[]
       username: string
     }) => {
-      const peer = peers.value.find((peer) => peer.username === username)!
+      const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
 
       peerIceCandidates.forEach((candidate) => {
         const ice_candidate = new RTCIceCandidate(candidate)
@@ -179,6 +181,15 @@ onMounted(async () => {
 
       const answerDescription = new RTCSessionDescription(answer)
       peer.pc.setRemoteDescription(answerDescription)
+    }
+  )
+
+  channel.on(
+    `ice_candidate:${userStore.username}`,
+    ({ ice_candidate: iceCandidate, username }: { ice_candidate: any; username: string }) => {
+      const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
+      const ice_candidate = new RTCIceCandidate(iceCandidate)
+      peer.pc.addIceCandidate(ice_candidate)
     }
   )
 })
