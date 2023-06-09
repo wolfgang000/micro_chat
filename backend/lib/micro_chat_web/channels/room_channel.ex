@@ -76,7 +76,6 @@ defmodule MicroChatWeb.RoomChannel do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
     {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_in_call: true})
 
-
     {:reply, :ok, socket}
   end
 
