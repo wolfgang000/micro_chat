@@ -1,7 +1,18 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Browser } from '@playwright/test'
 import { LoginPage } from './pages-objects/login-page'
 import { ChatRoomPage } from './pages-objects/chat-room-page'
 import { v4 } from 'uuid'
+
+const createChatRoomPage = async (browser: Browser, username: string, roomId: string) => {
+  const contextUser = await browser.newContext()
+  const pageUser = await contextUser.newPage()
+  const loginPageUser = new LoginPage(pageUser)
+  const chatRoomPage = new ChatRoomPage(pageUser)
+  await chatRoomPage.goto(roomId)
+  await loginPageUser.performLogin(username)
+
+  return { page: pageUser, chatRoomPage: chatRoomPage }
+}
 
 test('Start video call and wait for participants to join', async ({ page }) => {
   const loginPage = new LoginPage(page)
@@ -28,27 +39,24 @@ test('Start video call and wait for participants to join', async ({ page }) => {
 })
 
 test('Join an already started call', async ({ browser }) => {
-  const contextUserWolf = await browser.newContext()
-  const pageUserWolf = await contextUserWolf.newPage()
-  const loginPageUserWolf = new LoginPage(pageUserWolf)
-  const chatRoomPageUserWolf = new ChatRoomPage(pageUserWolf)
-
-  const contextUserDog = await browser.newContext()
-  const pageUserDog = await contextUserDog.newPage()
-  const loginPageUserDog = new LoginPage(pageUserDog)
-  const chatRoomPageUserDog = new ChatRoomPage(pageUserDog)
-
   const roomId = v4()
-
-  // ---------------------------------------------------
-  //Login and redirect UserWolf to chat room
-  await chatRoomPageUserWolf.goto(roomId)
-  await loginPageUserWolf.performLogin('UserWolf')
+  // UserWolf
+  const { page: pageUserWolf, chatRoomPage: chatRoomPageUserWolf } = await createChatRoomPage(
+    browser,
+    'UserWolf',
+    roomId
+  )
+  // Start call from UserWolf's tab
   await chatRoomPageUserWolf.startCallButton.click()
 
+  // UserDog
+  const { page: pageUserDog, chatRoomPage: chatRoomPageUserDog } = await createChatRoomPage(
+    browser,
+    'UserDog',
+    roomId
+  )
+
   // ---------------------------------------------------
-  await chatRoomPageUserDog.goto(roomId)
-  await loginPageUserDog.performLogin('UserDog')
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).not.toContainText('UserDog')
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).toContainText('UserWolf')
   await expect(chatRoomPageUserDog.startCallButton).not.toBeVisible()
