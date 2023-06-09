@@ -210,11 +210,17 @@ onMounted(async () => {
 <template>
   <div class="video-chat-container">
     <span>
-      <video id="currentUserVideoElement" ref="videoCurrentUser" autoplay playsinline></video>
+      <video
+        id="currentUserVideoElement"
+        ref="videoCurrentUser"
+        class="video-item"
+        autoplay
+        playsinline
+      ></video>
     </span>
     <div id="remoteUsersVideoContainer">
       <span v-for="peer in peers">
-        <VideoIteam :element_id="peer.element_id" />
+        <VideoIteam :element_id="peer.element_id" class="remote-user" />
       </span>
     </div>
   </div>
@@ -225,5 +231,11 @@ onMounted(async () => {
   height: 100%;
   overflow-y: auto;
   background: #202124;
+}
+.video-item {
+  width: 400px;
+  height: 400px;
+  margin: 2rem;
+  background: #2c3e50;
 }
 </style>

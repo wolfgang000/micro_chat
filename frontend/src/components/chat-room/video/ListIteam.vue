@@ -5,11 +5,11 @@ defineProps<{
 </script>
 
 <template>
-  <video :id="element_id" class="remote-user" autoplay playsinline></video>
+  <video :id="element_id" class="video-item" autoplay playsinline></video>
 </template>
 
 <style scoped>
-video {
+.video-item {
   width: 400px;
   height: 400px;
   margin: 2rem;
