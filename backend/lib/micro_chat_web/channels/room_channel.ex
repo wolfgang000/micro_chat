@@ -126,4 +126,18 @@ defmodule MicroChatWeb.RoomChannel do
 
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_in(
+        event = "ice_candidate:" <> _username,
+        %{"ice_candidate" => ice_candidate},
+        socket
+      ) do
+    broadcast_from(socket, event, %{
+      username: socket.assigns.username,
+      ice_candidate: ice_candidate
+    })
+
+    {:noreply, socket}
+  end
 end

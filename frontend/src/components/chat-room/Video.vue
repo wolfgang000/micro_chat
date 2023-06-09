@@ -70,26 +70,20 @@ onMounted(async () => {
         videoRemoteUser.srcObject = peer.remoteStream
       }
 
-      const iceCandidatesPromise = new Promise<RTCIceCandidate[]>(async (resolve, reject) => {
-        const candidates: RTCIceCandidate[] = []
-        peer.pc.onicecandidate = (event) => {
-          if (event.candidate) {
-            candidates.push(event.candidate)
-          } else {
-            resolve(candidates)
-          }
+      peer.pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          channel.push(`ice_candidate:${peer.username}`, { ice_candidate: event.candidate })
         }
+      }
 
-        const offerDescription = await peer.pc.createOffer()
-        await peer.pc.setLocalDescription(offerDescription)
-        const iceCandidates = await iceCandidatesPromise
-        const offer = {
-          sdp: offerDescription.sdp,
-          type: offerDescription.type
-        }
+      const offerDescription = await peer.pc.createOffer()
+      await peer.pc.setLocalDescription(offerDescription)
+      const offer = {
+        sdp: offerDescription.sdp,
+        type: offerDescription.type
+      }
 
-        channel.push(`offer:${peer.username}`, { offer: offer, ice_candidates: iceCandidates })
-      })
+      channel.push(`offer:${peer.username}`, { offer: offer, ice_candidates: [] })
     })
   }
 
@@ -128,30 +122,24 @@ onMounted(async () => {
         videoRemoteUser.srcObject = peer.remoteStream
       }
 
-      const iceCandidatesPromise = new Promise<RTCIceCandidate[]>((resolve, reject) => {
-        const candidates: RTCIceCandidate[] = []
-        peer.pc.onicecandidate = (event) => {
-          if (event.candidate) {
-            candidates.push(event.candidate)
-          } else {
-            resolve(candidates)
-          }
+      peer.pc.onicecandidate = (event) => {
+        if (event.candidate) {
+          channel.push(`ice_candidate:${peer.username}`, { ice_candidate: event.candidate })
         }
-      })
+      }
 
       await peer.pc.setRemoteDescription(new RTCSessionDescription(offer))
       const answerDescription = await peer.pc.createAnswer()
       await peer.pc.setLocalDescription(answerDescription)
 
       // Create an object which contains the SDP answer data
-      const iceCandidates = await iceCandidatesPromise
       const answer = {
         type: answerDescription.type,
         sdp: answerDescription.sdp
       }
 
       // Send the answer to the signaling server which further sends it to the caller
-      channel.push(`answer:${peer.username}`, { answer, ice_candidates: iceCandidates })
+      channel.push(`answer:${peer.username}`, { answer, ice_candidates: [] })
 
       peerIceCandidates.forEach((candidate) => {
         console.log('Adding caller ice candidate', candidate)
