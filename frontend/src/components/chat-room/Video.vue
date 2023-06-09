@@ -199,6 +199,10 @@ onMounted(async () => {
       peer.pc.addIceCandidate(ice_candidate)
     }
   )
+
+  channel.on(`a_user_has_left_the_call`, ({ username }: { username: string }) => {
+    peers.value = peers.value.filter((peer) => peer.username !== username)
+  })
 })
 </script>
 

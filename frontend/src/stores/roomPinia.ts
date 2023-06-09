@@ -31,10 +31,11 @@ export const useRoomStore = defineStore('room', {
     },
     leaveCall() {
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
-      channel.push('leave_call', {})
+      channel.off('a_user_has_left_the_call')
       channel.off(`offer:${userStore.username}`)
       channel.off(`answer:${userStore.username}`)
       channel.off(`ice_candidate:${userStore.username}`)
+      channel.push('leave_call', {})
       this.isVideoChatActivated = false
     },
     activateVideoChat() {

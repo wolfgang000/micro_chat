@@ -76,6 +76,7 @@ defmodule MicroChatWeb.RoomChannel do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
     {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_in_call: true})
 
+
     {:reply, :ok, socket}
   end
 
@@ -87,6 +88,10 @@ defmodule MicroChatWeb.RoomChannel do
       ) do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
     {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_in_call: false})
+
+    broadcast(socket, "a_user_has_left_the_call", %{
+      "username" => socket.assigns.username
+    })
 
     {:reply, :ok, socket}
   end

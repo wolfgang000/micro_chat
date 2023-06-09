@@ -109,3 +109,38 @@ test('Join an already started call', async ({ browser }) => {
     expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
   }
 })
+
+test('Join a call and leave', async ({ browser }) => {
+  const roomId = v4()
+  // UserWolf
+  const { page: pageUserWolf, chatRoomPage: chatRoomPageUserWolf } =
+    await createChatRoomPageAndLogin(browser, 'UserWolf', roomId)
+  // Start call from UserWolf's tab
+  await chatRoomPageUserWolf.startCallButton.click()
+
+  // UserDog
+  const { page: pageUserDog, chatRoomPage: chatRoomPageUserDog } = await createChatRoomPageAndLogin(
+    browser,
+    'UserDog',
+    roomId
+  )
+
+  // ---------------------------------------------------
+  // UserDog Joins
+  await chatRoomPageUserDog.joinCallButton.click()
+  // ---------------------------------------------------
+  // Check UserDog video element on UserWolf tab
+  // ---------------------------------------------------
+  await expect(chatRoomPageUserWolf.inCallIndicatorContainer).toContainText('UserDog')
+  expect(await (await chatRoomPageUserWolf.remoteUserVideoElements).count()).toBe(1) // only one peer(UserDog)
+  // only one peer(UserDog)
+  // ---------------------------------------------------
+  // UserDog Leaves
+  // ---------------------------------------------------
+  await chatRoomPageUserDog.leaveCallButton.click()
+  // ---------------------------------------------------
+  // Check video elements on UserWolf tab again
+  // ---------------------------------------------------
+  await expect(chatRoomPageUserWolf.inCallIndicatorContainer).not.toContainText('UserDog')
+  expect(await (await chatRoomPageUserWolf.remoteUserVideoElements).count()).toBe(0) // only one peer(UserDog)
+})
