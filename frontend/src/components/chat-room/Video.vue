@@ -45,7 +45,7 @@ onMounted(async () => {
   } else {
     const localStream = await promise
     const inCallUsers = roomStore.connectedUsers.filter((user) => user.is_in_call)
-    channel.push('join_call-1', {}).receive('ok', (reply) => console.log('got reply', reply))
+    channel.push('join_call', {})
 
     inCallUsers.forEach(async (user) => {
       const peer =
