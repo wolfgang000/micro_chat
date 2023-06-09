@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
 import {
@@ -13,7 +13,7 @@ import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
 import InputBox from '@/components/chat-room/InputBox.vue'
 
 const route = useRoute()
-
+const hasJoinedTheChannel = ref(false)
 const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
 roomStore.setRoomTopic(channelTopic)
@@ -21,10 +21,12 @@ roomStore.setRoomTopic(channelTopic)
 socketConnection.getOrCreateChannel(channelTopic)
 setupRoomChannelCallbacks(channelTopic)
 
-// handle race condition here
-socketConnection.channelJoin(channelTopic).then(() => {
-  roomStore.setRoomName(`#${roomId}`)
-  document.title = `Room #${roomId}`
+onBeforeMount(async () => {
+  await socketConnection.channelJoin(channelTopic).then(() => {
+    roomStore.setRoomName(`#${roomId}`)
+    document.title = `Room #${roomId}`
+    hasJoinedTheChannel.value = true
+  })
 })
 
 onUnmounted(() => {
@@ -33,7 +35,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="chat-room-main-container d-flex flex-column" style="height: 100vh">
+  <div
+    class="chat-room-main-container d-flex flex-column"
+    style="height: 100vh"
+    v-if="hasJoinedTheChannel"
+  >
     <ChatHeader />
     <ChatList />
     <TypingIndicator />
