@@ -4,6 +4,7 @@ import { useRoomStore } from '@/stores/roomPinia'
 import { socketConnection } from '@/api'
 import { userStore } from '@/stores/user'
 import { roomStore } from '@/stores/room'
+import VideoIteam from './video/ListIteam.vue'
 
 const peers = ref(
   [] as {
@@ -209,33 +210,20 @@ onMounted(async () => {
 <template>
   <div class="video-chat-container">
     <span>
-      <h3>Local Stream</h3>
       <video id="currentUserVideoElement" ref="videoCurrentUser" autoplay playsinline></video>
     </span>
     <div id="remoteUsersVideoContainer">
-      <span v-for="(peer, index) in peers">
-        <h3>Local Stream</h3>
-        <video :id="peer.element_id" class="remote-user" autoplay playsinline></video>
+      <span v-for="peer in peers">
+        <VideoIteam :element_id="peer.element_id" />
       </span>
     </div>
   </div>
 </template>
 
 <style scoped>
-video {
-  width: 400px;
-  height: 400px;
-  margin: 2rem;
-  background: #2c3e50;
-}
-.videos {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .video-chat-container {
   height: 100%;
   overflow-y: auto;
+  background: #202124;
 }
 </style>
