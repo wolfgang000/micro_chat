@@ -64,4 +64,20 @@ test('Join an already started call', async ({ browser }) => {
   expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
   await expect(chatRoomPageUserDog.joinCallButton).toBeDisabled()
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).toContainText('UserDog')
+
+  // Check remote user video element on UserWolf tab
+  // ---------------------------------------------------
+  const remoteUserVideoElements = await chatRoomPageUserWolf.remoteUserVideoElements
+  const remoteUserVideoElementsCount = await remoteUserVideoElements.count()
+  for (let i = 0; i < remoteUserVideoElementsCount; i++) {
+    await expect(remoteUserVideoElements.nth(i)).toBeVisible()
+    // wait for mocked webcam video to loaded
+    await pageUserWolf.waitForTimeout(500)
+    const currentUserVideoElementCurrentTime = await remoteUserVideoElements
+      .nth(i)
+      .evaluate((e: HTMLVideoElement) => {
+        return (e as HTMLVideoElement).currentTime
+      })
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+  }
 })

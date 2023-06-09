@@ -145,11 +145,18 @@ onMounted(async () => {
       <h3>Local Stream</h3>
       <video id="currentUserVideoElement" ref="videoCurrentUser" autoplay playsinline></video>
     </span>
-
-    <span>
-      <h3>Local Stream</h3>
-      <video id="remoteUserVideoElement" ref="videoRemoteUser" autoplay playsinline></video>
-    </span>
+    <div id="remoteUsersVideoContainer">
+      <span>
+        <h3>Local Stream</h3>
+        <video
+          id="remoteUserVideoElement"
+          class="remote-user"
+          ref="videoRemoteUser"
+          autoplay
+          playsinline
+        ></video>
+      </span>
+    </div>
   </div>
 </template>
 
