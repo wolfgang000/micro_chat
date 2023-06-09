@@ -10,6 +10,12 @@ export const roomStore = reactive({
   roomName: '',
   isVideoChatActivated: false,
   connectedUsers: [] as IConnectedUser[],
+  peers: [] as {
+    remoteStream: any
+    username: string
+    pc: RTCPeerConnection
+    element_id: string
+  }[],
   listItems: [] as IChatListItem[],
   setConnectedUsers(value: IConnectedUser[]) {
     this.connectedUsers = value
@@ -25,6 +31,9 @@ export const roomStore = reactive({
   },
   setIsVideoChatActivated(value: boolean) {
     this.isVideoChatActivated = value
+  },
+  pushPeers(value: any) {
+    this.peers.push(value)
   }
 })
 

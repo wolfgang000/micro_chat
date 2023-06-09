@@ -64,6 +64,29 @@ onMounted(async () => {
       }
 
       peers.value.push(peer)
+      peer.pc.onconnectionstatechange = (event) => {
+        switch (peer.pc.connectionState) {
+          // The connection has become fully connected
+          case 'connected':
+            console.log('RTCPeerConnection: Connected')
+            break
+
+          case 'disconnected':
+            console.log('RTCPeerConnection: Disconnected')
+            peers.value = peers.value.filter((p) => p.username !== peer.username)
+            break
+
+          // One or more transports has terminated unexpectedly or in an error
+          case 'failed':
+            console.log('RTCPeerConnection: Failed')
+            break
+
+          // The connection has been closed
+          case 'closed':
+            console.log('RTCPeerConnection: Closed')
+            break
+        }
+      }
       await nextTick()
       const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
       if (videoRemoteUser) {
@@ -116,6 +139,29 @@ onMounted(async () => {
       }
 
       peers.value.push(peer)
+      peer.pc.onconnectionstatechange = (event) => {
+        switch (peer.pc.connectionState) {
+          // The connection has become fully connected
+          case 'connected':
+            console.log('RTCPeerConnection: Connected')
+            break
+
+          case 'disconnected':
+            console.log('RTCPeerConnection: Disconnected')
+            peers.value = peers.value.filter((p) => p.username !== peer.username)
+            break
+
+          // One or more transports has terminated unexpectedly or in an error
+          case 'failed':
+            console.log('RTCPeerConnection: Failed')
+            break
+
+          // The connection has been closed
+          case 'closed':
+            console.log('RTCPeerConnection: Closed')
+            break
+        }
+      }
       await nextTick()
       const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
       if (videoRemoteUser) {
