@@ -56,24 +56,40 @@ test('Join an already started call', async ({ browser }) => {
     roomId
   )
 
+  // Check in Call Indicator
   // ---------------------------------------------------
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).not.toContainText('UserDog')
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).toContainText('UserWolf')
+  // ---------------------------------------------------
+  // Check in Call and Join Buttons
+  // ---------------------------------------------------
   await expect(chatRoomPageUserDog.startCallButton).not.toBeVisible()
   await expect(chatRoomPageUserDog.joinCallButton).not.toBeDisabled()
+  // ---------------------------------------------------
+  // Join
   await chatRoomPageUserDog.joinCallButton.click()
-  await expect(chatRoomPageUserDog.currentUserVideoElement).toBeVisible()
-  // wait for mocked webcam video to loaded
-  await pageUserDog.waitForTimeout(10)
-  const currentUserVideoElementCurrentTime =
-    await chatRoomPageUserDog.currentUserVideoElement.evaluate((e: HTMLVideoElement) => {
-      return (e as HTMLVideoElement).currentTime
-    })
-  expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
-  await expect(chatRoomPageUserDog.joinCallButton).toBeDisabled()
+  // ---------------------------------------------------
+  // Check in Call Indicator again
   await expect(chatRoomPageUserDog.inCallIndicatorContainer).toContainText('UserDog')
-
-  // Check remote user video element on UserWolf tab
+  // ---------------------------------------------------
+  // Check UserWolf video element on UserDog tab
+  const peersVideoElements = await chatRoomPageUserDog.remoteUserVideoElements
+  const peersVideoElementsCount = await peersVideoElements.count()
+  expect(peersVideoElementsCount).toBe(1) // only one peer
+  for (let i = 0; i < peersVideoElementsCount; i++) {
+    await expect(peersVideoElements.nth(i)).toBeVisible()
+    // wait for mocked webcam video to loaded
+    await pageUserWolf.waitForTimeout(500)
+    const currentUserVideoElementCurrentTime = await peersVideoElements
+      .nth(i)
+      .evaluate((e: HTMLVideoElement) => {
+        return (e as HTMLVideoElement).currentTime
+      })
+    // Check if the video element is streaming the peer's mocked webcam
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+  }
+  // ---------------------------------------------------
+  // Check remote UserDog video element on UserWolf tab
   // ---------------------------------------------------
   const remoteUserVideoElements = await chatRoomPageUserWolf.remoteUserVideoElements
   const remoteUserVideoElementsCount = await remoteUserVideoElements.count()
