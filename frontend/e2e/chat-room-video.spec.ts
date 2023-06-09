@@ -1,27 +1,14 @@
 import { test, expect, Browser } from '@playwright/test'
-import { LoginPage } from './pages-objects/login-page'
-import { ChatRoomPage } from './pages-objects/chat-room-page'
 import { v4 } from 'uuid'
+import { createChatRoomPageAndLogin } from './util'
 
-const createChatRoomPage = async (browser: Browser, username: string, roomId: string) => {
-  const contextUser = await browser.newContext()
-  const pageUser = await contextUser.newPage()
-  const loginPageUser = new LoginPage(pageUser)
-  const chatRoomPage = new ChatRoomPage(pageUser)
-  await chatRoomPage.goto(roomId)
-  await loginPageUser.performLogin(username)
-
-  return { page: pageUser, chatRoomPage: chatRoomPage }
-}
-
-test('Start video call and wait for participants to join', async ({ page }) => {
-  const loginPage = new LoginPage(page)
-  const chatRoomPage = new ChatRoomPage(page)
+test('Start video call and wait for participants to join', async ({ browser }) => {
   const roomId = v4()
-
-  await chatRoomPage.goto(roomId)
-  await loginPage.performLogin('user-1')
-  await chatRoomPage.validateCurrentUrl()
+  const { page: page, chatRoomPage: chatRoomPage } = await createChatRoomPageAndLogin(
+    browser,
+    'user-1',
+    roomId
+  )
 
   await chatRoomPage.startCallButton.click()
   await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
@@ -41,16 +28,13 @@ test('Start video call and wait for participants to join', async ({ page }) => {
 test('Join an already started call', async ({ browser }) => {
   const roomId = v4()
   // UserWolf
-  const { page: pageUserWolf, chatRoomPage: chatRoomPageUserWolf } = await createChatRoomPage(
-    browser,
-    'UserWolf',
-    roomId
-  )
+  const { page: pageUserWolf, chatRoomPage: chatRoomPageUserWolf } =
+    await createChatRoomPageAndLogin(browser, 'UserWolf', roomId)
   // Start call from UserWolf's tab
   await chatRoomPageUserWolf.startCallButton.click()
 
   // UserDog
-  const { page: pageUserDog, chatRoomPage: chatRoomPageUserDog } = await createChatRoomPage(
+  const { page: pageUserDog, chatRoomPage: chatRoomPageUserDog } = await createChatRoomPageAndLogin(
     browser,
     'UserDog',
     roomId
