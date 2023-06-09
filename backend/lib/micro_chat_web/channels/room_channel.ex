@@ -115,7 +115,7 @@ defmodule MicroChatWeb.RoomChannel do
   @impl true
   def handle_in(
         event = "offer:" <> _username,
-        %{"answer" => offer, "ice_candidates" => ice_candidates},
+        %{"offer" => offer, "ice_candidates" => ice_candidates},
         socket
       ) do
     broadcast_from(socket, event, %{

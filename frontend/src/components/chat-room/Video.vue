@@ -25,10 +25,6 @@ const servers = {
   ],
   iceCandidatePoolSize: 10
 }
-// Global State
-// let pc = new RTCPeerConnection(servers)
-// let localStream = null
-// let remoteStream: MediaStream | null = null
 
 onMounted(async () => {
   const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
@@ -127,11 +123,18 @@ onMounted(async () => {
       })
 
       // Set up an event listener to pull tracks from the remote peer stream when they are available
-      // pc.ontrack = (event) => {
-      //   event.streams[0].getTracks().forEach((track) => {
-      //     remoteStream!.addTrack(track)
-      //   })
-      // }
+      peer.pc.ontrack = (event) => {
+        event.streams[0].getTracks().forEach((track) => {
+          peer.remoteStream.addTrack(track)
+        })
+      }
+
+      peers.value.push(peer)
+      await nextTick()
+      const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
+      if (videoRemoteUser) {
+        videoRemoteUser.srcObject = peer.remoteStream
+      }
 
       const iceCandidatesPromise = new Promise<RTCIceCandidate[]>(async (resolve, reject) => {
         const candidates: RTCIceCandidate[] = []
@@ -151,7 +154,6 @@ onMounted(async () => {
           type: offerDescription.type
         }
 
-        peers.value.push(peer)
         channel.push(`offer:${peer.username}`, { offer: offer, ice_candidates: iceCandidates })
       })
     })
