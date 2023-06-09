@@ -2,6 +2,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoomStore } from '@/stores/roomPinia'
 import { socketConnection } from '@/api'
+import { userStore } from '@/stores/user'
 
 const peers = ref([] as any[])
 
@@ -91,7 +92,8 @@ onMounted(async () => {
         }
 
         // Send the answer to the signaling server which further sends it to the caller
-        channel.push('answer', { answer, ice_candidates: iceCandidates })
+        channel.push(`answer:${peer.username}`, { answer, ice_candidates: iceCandidates })
+        console.log('push answer:${userStore.username')
 
         peerIceCandidates.forEach((candidate) => {
           console.log('Adding caller ice candidate', candidate)
@@ -137,8 +139,10 @@ onMounted(async () => {
     channel.push('join_call', { offer: offer, ice_candidates: iceCandidates })
 
     channel.on(
-      'answer',
+      `answer:${userStore.username}`,
       ({ answer, ice_candidates: peerIceCandidates }: { answer: any; ice_candidates: any[] }) => {
+        console.log('On answer:${userStore.username')
+
         console.log('Received answer from callee', answer)
 
         peerIceCandidates.forEach((candidate) => {

@@ -86,8 +86,14 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("answer", %{"answer" => answer, "ice_candidates" => ice_candidates}, socket) do
-    broadcast_from(socket, "answer", %{answer: answer, ice_candidates: ice_candidates})
+  def handle_in(
+        event = "answer:" <> _username,
+        %{"answer" => answer, "ice_candidates" => ice_candidates},
+        socket
+      ) do
+
+    IO.inspect(event, label: :broadcast_from)
+    broadcast_from(socket, event, %{answer: answer, ice_candidates: ice_candidates})
 
     {:noreply, socket}
   end
