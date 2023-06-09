@@ -25,6 +25,7 @@ export class ChatRoomPage {
   }
 
   async validateCurrentUrl() {
+    await expect(this.sendMessageButton).toBeVisible()
     await this.page.waitForURL(/\/room\/\w+/)
   }
 

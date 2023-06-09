@@ -3,8 +3,6 @@ import { LoginPage } from './pages-objects/login-page'
 import { ChatRoomPage } from './pages-objects/chat-room-page'
 import { v4 } from 'uuid'
 
-//TODO: There is a small race condition here, check and fix later
-
 test('Send a message to chat room', async ({ page }) => {
   const loginPage = new LoginPage(page)
   const chatRoomPage = new ChatRoomPage(page)
