@@ -14,6 +14,7 @@ export class ChatRoomPage {
   readonly currentUserVideoElement: Locator
   readonly remoteUserVideoElements: Locator
   readonly joinCallButton: Locator
+  readonly leaveCallButton: Locator
   readonly inCallIndicatorContainer: Locator
 
   constructor(page: Page) {
@@ -28,6 +29,7 @@ export class ChatRoomPage {
     this.currentUserVideoElement = page.locator('#currentUserVideoElement')
     this.joinCallButton = page.locator('#joinCallButton')
     this.inCallIndicatorContainer = page.locator('#InCallIndicatorContainer')
+    this.leaveCallButton = page.locator('#leaveCallButton')
     this.remoteUserVideoElements = page.locator("//video[contains(@class, 'remote-user')]")
   }
 

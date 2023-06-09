@@ -12,6 +12,10 @@ const onJoinCallButtonClick = async () => {
   roomStorePinia.joinCallAsCalleePart1()
 }
 
+const onLeaveCallButtonClick = async () => {
+  roomStorePinia.leaveCall()
+}
+
 const inCallUsers = computed(() => {
   return roomStore.connectedUsers.filter((user) => user.is_in_call)
 })
@@ -33,17 +37,25 @@ const inCallUsers = computed(() => {
             type="button"
             class="btn btn-light me-2"
             @click="onStartCallButtonClick"
-            :disabled="roomStorePinia.isVideoChatActivated"
           >
             <IconPhone />
           </button>
           <button
-            v-if="inCallUsers.length > 0"
+            v-else-if="inCallUsers.length > 0 && roomStorePinia.isVideoChatActivated"
+            id="leaveCallButton"
+            type="button"
+            class="btn btn-danger me-2"
+            @click="onLeaveCallButtonClick"
+          >
+            <IconPhone class="rotated-phone" />
+          </button>
+
+          <button
+            v-else-if="inCallUsers.length > 0"
             id="joinCallButton"
             type="button"
             class="btn btn-success me-2"
             @click="onJoinCallButtonClick"
-            :disabled="roomStorePinia.isVideoChatActivated"
           >
             <IconPhone class="me-2" />
             Join Call
@@ -105,5 +117,8 @@ const inCallUsers = computed(() => {
   background: rgba(247, 249, 250, 1);
   box-shadow: 0 10px 6px -6px #ccc;
   z-index: 1;
+}
+.rotated-phone {
+  transform: rotate(135deg);
 }
 </style>

@@ -21,8 +21,26 @@ test('Start video call and wait for participants to join', async ({ browser }) =
   )
   expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
   await expect(chatRoomPage.startCallButton).not.toBeVisible()
-  await expect(chatRoomPage.joinCallButton).toBeDisabled()
+  await expect(chatRoomPage.leaveCallButton).toBeVisible()
   await expect(chatRoomPage.inCallIndicatorContainer).toContainText('user-1')
+})
+
+test('Start video call and then leave', async ({ browser }) => {
+  const roomId = v4()
+  const { page: page, chatRoomPage: chatRoomPage } = await createChatRoomPageAndLogin(
+    browser,
+    'user-1',
+    roomId
+  )
+
+  await chatRoomPage.startCallButton.click()
+  await expect(chatRoomPage.currentUserVideoElement).toBeVisible()
+  await expect(chatRoomPage.inCallIndicatorContainer).toContainText('user-1')
+  // ---------------------------------------------------
+  await chatRoomPage.leaveCallButton.click()
+  await expect(chatRoomPage.currentUserVideoElement).not.toBeVisible()
+  await expect(chatRoomPage.inCallIndicatorContainer).not.toBeVisible()
+  await expect(chatRoomPage.startCallButton).toBeVisible()
 })
 
 test('Join an already started call', async ({ browser }) => {

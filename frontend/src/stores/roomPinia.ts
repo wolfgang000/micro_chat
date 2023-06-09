@@ -1,5 +1,6 @@
 import { socketConnection } from '@/api'
 import { defineStore } from 'pinia'
+import { userStore } from './user'
 
 export const useRoomStore = defineStore('room', {
   state: () => {
@@ -27,6 +28,14 @@ export const useRoomStore = defineStore('room', {
         this.isVideoChatActivated = true
         this.wasVideoActivateByCurrentUser = false
       })
+    },
+    leaveCall() {
+      const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+      channel.push('leave_call', {})
+      channel.off(`offer:${userStore.username}`)
+      channel.off(`answer:${userStore.username}`)
+      channel.off(`ice_candidate:${userStore.username}`)
+      this.isVideoChatActivated = false
     },
     activateVideoChat() {
       return navigator.mediaDevices

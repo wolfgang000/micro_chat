@@ -81,6 +81,18 @@ defmodule MicroChatWeb.RoomChannel do
 
   @impl true
   def handle_in(
+        "leave_call",
+        _payload,
+        socket
+      ) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_in_call: false})
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in(
         event = "answer:" <> _username,
         %{"answer" => answer},
         socket
