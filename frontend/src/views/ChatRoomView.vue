@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
+import { onBeforeMount, onUnmounted, ref } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
-import {
-  roomStore,
-  setupChannelPresenceCallbacks as setupRoomChannelCallbacks
-} from '@/stores/room'
+import { setupChannelPresenceCallbacks } from '@/stores/room'
 
 import VideosSection from '@/components/chat-room/VideosSection.vue'
 import MessagesSection from '@/components/chat-room/MessagesSection.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
 import { useRoomStore } from '@/stores/roomPinia'
 
-const roomStorePinia = useRoomStore()
-
+const roomStore = useRoomStore()
 const route = useRoute()
 const hasJoinedTheChannel = ref(false)
 const roomId = route.params.roomId
 const channelTopic = `room:${roomId}`
-roomStorePinia.setRoomTopic(channelTopic)
+roomStore.setRoomTopic(channelTopic)
 
 socketConnection.getOrCreateChannel(channelTopic)
-setupRoomChannelCallbacks(channelTopic)
+setupChannelPresenceCallbacks(channelTopic)
 
 onBeforeMount(async () => {
   await socketConnection.channelJoin(channelTopic).then(() => {
-    roomStorePinia.setRoomName(`#${roomId}`)
+    roomStore.setRoomName(`#${roomId}`)
     document.title = `Room #${roomId}`
     hasJoinedTheChannel.value = true
   })
@@ -40,7 +36,7 @@ onUnmounted(() => {
   <div class="d-flex flex-column" style="height: 100vh" v-if="hasJoinedTheChannel">
     <ChatHeader />
     <div class="d-flex flex-row" style="height: calc(100% - 50px)">
-      <VideosSection v-if="roomStorePinia.isVideoChatActivated" />
+      <VideosSection v-if="roomStore.isVideoChatActivated" />
       <MessagesSection />
     </div>
   </div>
