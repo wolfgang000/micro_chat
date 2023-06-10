@@ -233,9 +233,8 @@ onMounted(async () => {
   background: #202124;
 }
 .video-item {
-  width: 400px;
-  height: 400px;
-  margin: 2rem;
+  height: auto;
+  max-width: 100%;
   background: #2c3e50;
 }
 </style>

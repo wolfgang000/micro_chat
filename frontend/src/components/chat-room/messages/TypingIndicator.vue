@@ -20,5 +20,5 @@ const typingUsers = computed(() => {
 </template>
 
 <style scoped>
-@import './list-item/base.css';
+@import './base.css';
 </style>

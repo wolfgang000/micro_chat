@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
-import ListItem from './list-item/ListItem.vue'
+import ListItem from './MessageListItem.vue'
 </script>
 
 <template>

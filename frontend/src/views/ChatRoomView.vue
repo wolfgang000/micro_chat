@@ -8,11 +8,8 @@ import {
 } from '@/stores/room'
 
 import VideoContainer from '@/components/chat-room/VideoContainer.vue'
-import ChatList from '@/components/chat-room/List.vue'
+import MessagesSection from '@/components/chat-room/MessagesSection.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
-import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
-import InCallIndicator from '@/components/chat-room/InCallIndicator.vue'
-import InputBox from '@/components/chat-room/InputBox.vue'
 import { useRoomStore } from '@/stores/roomPinia'
 
 const roomStorePinia = useRoomStore()
@@ -40,22 +37,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="d-flex flex-row justify-content-between" v-if="hasJoinedTheChannel">
-    <div v-if="roomStorePinia.isVideoChatActivated" style="height: 100vh">
-      <VideoContainer />
-    </div>
-    <div class="chat-room-main-container d-flex flex-column flex-grow-1" style="height: 100vh">
-      <ChatHeader />
-      <InCallIndicator />
-      <ChatList />
-      <TypingIndicator />
-      <InputBox />
+  <div class="d-flex flex-column" style="height: 100vh" v-if="hasJoinedTheChannel">
+    <ChatHeader />
+    <div class="d-flex flex-row" style="height: 100%">
+      <VideoContainer v-if="roomStorePinia.isVideoChatActivated" />
+      <MessagesSection />
     </div>
   </div>
 </template>
 
-<style scoped>
-.chat-room-main-container {
-  background: #f7f9fa;
-}
-</style>
+<style scoped></style>
