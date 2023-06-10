@@ -24,4 +24,10 @@ defmodule MicroChatWeb.RoomChannelTest do
       "created_at" => _
     })
   end
+
+  test "get ice_server", %{socket: socket} do
+    Mox.stub_with(MicroChat.WebRTC.IceServersProviderMock, MicroChat.WebRTC.IceServersProviderGoogle)
+    ref = push(socket, "get_ice_servers", %{})
+    assert_reply ref, :ok, %{"iceServers" => [_]}
+  end
 end

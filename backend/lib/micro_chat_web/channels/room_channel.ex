@@ -1,6 +1,7 @@
 defmodule MicroChatWeb.RoomChannel do
   use MicroChatWeb, :channel
   alias MicroChatWeb.Presence
+  alias MicroChat.WebRTC.IceServersProvider
 
   @impl true
   def join("room:" <> _room_id, _payload, socket) do
@@ -19,6 +20,13 @@ defmodule MicroChatWeb.RoomChannel do
 
     push(socket, "presence_state", Presence.list(socket))
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_in("get_ice_servers", _payload, socket) do
+    ice_servers = IceServersProvider.get_ice_servers()
+
+    {:reply, {:ok, ice_servers}, socket}
   end
 
   @impl true

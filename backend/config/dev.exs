@@ -61,3 +61,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :micro_chat, MicroChat.WebRTC,
+  ice_servers_provider: MicroChat.WebRTC.IceServersProviderGoogle
