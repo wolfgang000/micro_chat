@@ -7,6 +7,7 @@ export const useRoomStore = defineStore('room', {
     const videoElementCurrentUser: any = null
 
     return {
+      roomName: '',
       roomTopic: '',
       isVideoChatActivated: false,
       wasVideoActivateByCurrentUser: false,
@@ -14,6 +15,9 @@ export const useRoomStore = defineStore('room', {
     }
   },
   actions: {
+    setRoomName(value: string) {
+      this.roomName = value
+    },
     setRoomTopic(value: string) {
       this.roomTopic = value
     },

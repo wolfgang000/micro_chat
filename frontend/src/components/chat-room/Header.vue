@@ -27,7 +27,7 @@ const inCallUsers = computed(() => {
       <div class="d-flex justify-content-between" style="width: 100%; margin-right: 0.5rem">
         <div class="d-flex align-items-center ms-2">
           <a href="#"
-            ><strong>{{ roomStore.roomName }}</strong></a
+            ><strong>{{ roomStorePinia.roomName }}</strong></a
           >
         </div>
         <div>

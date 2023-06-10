@@ -28,7 +28,7 @@ setupRoomChannelCallbacks(channelTopic)
 
 onBeforeMount(async () => {
   await socketConnection.channelJoin(channelTopic).then(() => {
-    roomStore.setRoomName(`#${roomId}`)
+    roomStorePinia.setRoomName(`#${roomId}`)
     document.title = `Room #${roomId}`
     hasJoinedTheChannel.value = true
   })
