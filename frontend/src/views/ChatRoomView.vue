@@ -7,7 +7,7 @@ import {
   setupChannelPresenceCallbacks as setupRoomChannelCallbacks
 } from '@/stores/room'
 
-import VideoContainer from '@/components/chat-room/VideoContainer.vue'
+import VideosSection from '@/components/chat-room/VideosSection.vue'
 import MessagesSection from '@/components/chat-room/MessagesSection.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
 import { useRoomStore } from '@/stores/roomPinia'
@@ -40,7 +40,7 @@ onUnmounted(() => {
   <div class="d-flex flex-column" style="height: 100vh" v-if="hasJoinedTheChannel">
     <ChatHeader />
     <div class="d-flex flex-row" style="height: calc(100% - 50px)">
-      <VideoContainer v-if="roomStorePinia.isVideoChatActivated" />
+      <VideosSection v-if="roomStorePinia.isVideoChatActivated" />
       <MessagesSection />
     </div>
   </div>
