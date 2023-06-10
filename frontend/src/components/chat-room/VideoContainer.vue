@@ -26,7 +26,6 @@ const createPeer = (username: string) => {
 }
 
 const roomStorePinia = useRoomStore()
-const videoCurrentUser = ref<HTMLVideoElement>()
 
 const servers = {
   iceServers: [
@@ -39,7 +38,9 @@ const servers = {
 
 onMounted(async () => {
   const channel = socketConnection.getOrCreateChannel(roomStorePinia.roomTopic)
-  const promise = roomStorePinia.setVideoElementCurrentUser(videoCurrentUser.value!)
+  const promise = roomStorePinia.setVideoElementCurrentUser(
+    document.getElementById('currentUserVideoElement') as HTMLVideoElement
+  )
 
   if (roomStorePinia.wasVideoActivateByCurrentUser) {
     channel.push('start_call', {})
@@ -210,19 +211,11 @@ onMounted(async () => {
 <template>
   <div class="video-chat-container">
     <span>
-      <video
-        id="currentUserVideoElement"
-        ref="videoCurrentUser"
-        class="video-item"
-        autoplay
-        playsinline
-      ></video>
+      <VideoIteam element_id="currentUserVideoElement" />
     </span>
-    <div id="remoteUsersVideoContainer">
-      <span v-for="peer in peers">
-        <VideoIteam :element_id="peer.element_id" class="remote-user" />
-      </span>
-    </div>
+    <span v-for="peer in peers">
+      <VideoIteam :element_id="peer.element_id" class="remote-user" />
+    </span>
   </div>
 </template>
 
@@ -231,10 +224,5 @@ onMounted(async () => {
   height: 100%;
   overflow-y: auto;
   background: #202124;
-}
-.video-item {
-  height: auto;
-  max-width: 100%;
-  background: #2c3e50;
 }
 </style>

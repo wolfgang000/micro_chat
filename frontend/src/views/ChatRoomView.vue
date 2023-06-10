@@ -39,7 +39,7 @@ onUnmounted(() => {
 <template>
   <div class="d-flex flex-column" style="height: 100vh" v-if="hasJoinedTheChannel">
     <ChatHeader />
-    <div class="d-flex flex-row" style="height: 100%">
+    <div class="d-flex flex-row" style="height: calc(100% - 50px)">
       <VideoContainer v-if="roomStorePinia.isVideoChatActivated" />
       <MessagesSection />
     </div>
