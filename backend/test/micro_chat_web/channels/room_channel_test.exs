@@ -25,9 +25,33 @@ defmodule MicroChatWeb.RoomChannelTest do
     })
   end
 
-  test "get ice_server", %{socket: socket} do
-    Mox.stub_with(MicroChat.WebRTC.IceServersProviderMock, MicroChat.WebRTC.IceServersProviderGoogle)
+  test "get ice_server(google)", %{socket: socket} do
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderGoogle
+    )
+
     ref = push(socket, "get_ice_servers", %{})
-    assert_reply ref, :ok, %{"iceServers" => [_]}
+
+    assert_reply ref, :ok, %{
+      "iceServers" => [
+        %{"urls" => ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]}
+      ]
+    }
+  end
+
+  test "get ice_server(twilo)", %{socket: socket} do
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderTwilio
+    )
+
+    ref = push(socket, "get_ice_servers", %{})
+
+    assert_reply ref, :ok, %{
+      "ice_servers" => [
+        %{"url" => "stun:example.twilio.com:3478", "urls" => "stun:example.twilio.com:3478"} | _
+      ]
+    }
   end
 end

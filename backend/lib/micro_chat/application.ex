@@ -16,9 +16,9 @@ defmodule MicroChat.Application do
       {Phoenix.PubSub, name: MicroChat.PubSub},
       MicroChatWeb.Presence,
       # Start the Endpoint (http/https)
-      MicroChatWeb.Endpoint
+      MicroChatWeb.Endpoint,
       # Start a worker by calling: MicroChat.Worker.start_link(arg)
-      # {MicroChat.Worker, arg}
+      {MicroChat.Store.TwilioIceServersStore, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

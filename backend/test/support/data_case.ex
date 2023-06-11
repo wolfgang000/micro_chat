@@ -35,7 +35,7 @@ defmodule MicroChat.DataCase do
   @doc """
   Sets up the sandbox based on the test tags.
   """
-  def setup_sandbox(tags) do
+  def setup_sandbox(_tags) do
     #   pid = Ecto.Adapters.SQL.Sandbox.start_owner!(MicroChat.Repo, shared: not tags[:async])
     #   on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end

@@ -41,6 +41,7 @@ defmodule MicroChat.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.2"},
+      {:httpoison, "~> 2.1"},
       {:phoenix_ecto, "~> 4.4"},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
