@@ -76,9 +76,6 @@ if config_env() == :prod do
     account_sid: twilio_account_sid,
     auth_token: twilio_auth_token
 
-  config :micro_chat, MicroChat.WebRTC,
-    ice_servers_provider: MicroChat.WebRTC.IceServersProviderTwilio
-
   config :phoenix, :filter_parameters, ["password", "secret", "session_key", "token"]
 
   config :micro_chat, :children, [

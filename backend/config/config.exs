@@ -30,6 +30,9 @@ config :phoenix, :json_library, Jason
 
 config :micro_chat, MicroChat.API, twilio_api_client: MicroChat.API.TwilioAPIClient
 
+config :micro_chat, MicroChat.WebRTC,
+  ice_servers_provider: MicroChat.WebRTC.IceServersProviderTwilio
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
