@@ -25,3 +25,4 @@ jobs:
         with:
           git_remote_url: ${{ secrets.SANDBOX_BACKEND_GIT_REMOTE_URL }}
           ssh_private_key: ${{ secrets.SANDBOX_SSH_PRIVATE_KEY }}
+          git_push_flags: "--force"
