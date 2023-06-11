@@ -1,1 +1,27 @@
 name: Sandbox Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref (empty => use selected branch)
+        required: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to backend
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: ${{ secrets.SANDBOX_BACKEND_GIT_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.SANDBOX_SSH_PRIVATE_KEY }}
