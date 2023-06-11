@@ -35,11 +35,11 @@ defmodule MicroChat.Store.TwilioIceServersStore do
 
   defp refresh_ice_servers_credentials do
     case @twilio_api_client.get_ice_servers_and_credentials() do
-      {:ok, %{"ttl" => ttl} = ice_servers} ->
+      {:ok, %{"ttl" => ttl, "ice_servers" => ice_servers}} ->
         refresh_time = (String.to_integer(ttl) - @refresh_buffer) * 1000
         Process.send_after(self(), :refresh_ice_servers_credentials, refresh_time)
 
-        {:ok, ice_servers}
+        {:ok, %{"iceServers" => ice_servers}}
 
       {:error, error} ->
         {:error, error}
