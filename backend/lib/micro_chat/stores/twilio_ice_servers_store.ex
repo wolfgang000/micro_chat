@@ -11,8 +11,8 @@ defmodule MicroChat.Store.TwilioIceServersStore do
 
   @impl true
   def init(_state) do
-    Process.send_after(self(), :refresh_ice_servers_credentials, 0)
-    {:ok, nil}
+    {:ok, state} = refresh_ice_servers_credentials()
+    {:ok, state}
   end
 
   @impl true

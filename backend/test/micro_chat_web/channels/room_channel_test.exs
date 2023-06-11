@@ -1,5 +1,7 @@
 defmodule MicroChatWeb.RoomChannelTest do
   use MicroChatWeb.ChannelCase
+  import Mox
+  setup :set_mox_from_context
 
   setup do
     {:ok, _, socket} =
@@ -42,9 +44,16 @@ defmodule MicroChatWeb.RoomChannelTest do
 
   test "get ice_server(twilo)", %{socket: socket} do
     Mox.stub_with(
+      MicroChat.API.TwilioAPIClientMock,
+      MicroChat.API.TwilioAPIClientStub
+    )
+
+    Mox.stub_with(
       MicroChat.WebRTC.IceServersProviderMock,
       MicroChat.WebRTC.IceServersProviderTwilio
     )
+
+    start_supervised!(MicroChat.Store.TwilioIceServersStore)
 
     ref = push(socket, "get_ice_servers", %{})
 

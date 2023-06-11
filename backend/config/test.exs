@@ -26,7 +26,9 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :micro_chat, MicroChat.API, twilio_api_client: MicroChat.API.TwilioAPIClientStub
+config :micro_chat, MicroChat.API, twilio_api_client: MicroChat.API.TwilioAPIClientMock
 
 config :micro_chat, MicroChat.WebRTC,
   ice_servers_provider: MicroChat.WebRTC.IceServersProviderMock
+
+config :micro_chat, :children, []

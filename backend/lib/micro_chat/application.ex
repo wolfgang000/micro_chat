@@ -16,15 +16,16 @@ defmodule MicroChat.Application do
       {Phoenix.PubSub, name: MicroChat.PubSub},
       MicroChatWeb.Presence,
       # Start the Endpoint (http/https)
-      MicroChatWeb.Endpoint,
+      MicroChatWeb.Endpoint
       # Start a worker by calling: MicroChat.Worker.start_link(arg)
-      {MicroChat.Store.TwilioIceServersStore, []}
     ]
+
+    env_children = Application.get_env(:micro_chat, :children)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: MicroChat.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children ++ env_children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration

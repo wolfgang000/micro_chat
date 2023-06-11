@@ -81,6 +81,10 @@ if config_env() == :prod do
 
   config :phoenix, :filter_parameters, ["password", "secret", "session_key", "token"]
 
+  config :micro_chat, :children, [
+    {MicroChat.Store.TwilioIceServersStore, []}
+  ]
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

@@ -65,6 +65,4 @@ config :phoenix, :plug_init_mode, :runtime
 config :micro_chat, MicroChat.WebRTC,
   ice_servers_provider: MicroChat.WebRTC.IceServersProviderGoogle
 
-config :twilio,
-  account_sid: System.get_env("DEV_TWILIO_ACCOUNT_SID"),
-  auth_token: System.get_env("DEV_TWILIO_AUTH_TOKEN")
+config :micro_chat, :children, []
