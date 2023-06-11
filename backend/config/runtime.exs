@@ -79,6 +79,8 @@ if config_env() == :prod do
   config :micro_chat, MicroChat.WebRTC,
     ice_servers_provider: MicroChat.WebRTC.IceServersProviderTwilio
 
+  config :phoenix, :filter_parameters, ["password", "secret", "session_key", "token"]
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
