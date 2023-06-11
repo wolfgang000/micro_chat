@@ -5,7 +5,7 @@ import { userStore } from '@/stores/user'
 
 const typingUsers = computed(() => {
   return roomStore.connectedUsers.filter(
-    (user) => user.id_typing && user.username !== userStore.username
+    (user) => user.is_typing && user.username !== userStore.username
   )
 })
 </script>

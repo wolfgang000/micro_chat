@@ -15,7 +15,7 @@ defmodule MicroChatWeb.RoomChannel do
     {:ok, _} =
       Presence.track(socket, socket.assigns.user_id, %{
         is_in_call: false,
-        id_typing: false,
+        is_typing: false,
         username: socket.assigns.username
       })
 
@@ -45,12 +45,12 @@ defmodule MicroChatWeb.RoomChannel do
   def handle_in("user:typing", %{"typing" => typing}, socket) do
     {:ok, _} =
       Presence.update(socket, socket.assigns.user_id, %{
-        id_typing: typing,
+        is_typing: typing,
         username: socket.assigns.username
       })
 
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
-    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | id_typing: typing})
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_typing: typing})
 
     {:reply, :ok, socket}
   end
