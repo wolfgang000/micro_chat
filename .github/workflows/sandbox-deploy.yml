@@ -12,7 +12,7 @@ on:
         required: false
 
 jobs:
-  deploy:
+  deploy-backend:
     runs-on: ubuntu-latest
     steps:
       - name: Cloning repo
@@ -25,5 +25,21 @@ jobs:
         with:
           branch: main
           git_remote_url: ${{ secrets.SANDBOX_BACKEND_GIT_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.SANDBOX_SSH_PRIVATE_KEY }}
+          git_push_flags: "--force"
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to Frontend
+        uses: dokku/github-action@master
+        with:
+          branch: main
+          git_remote_url: ${{ secrets.SANDBOX_FRONTEND_GIT_REMOTE_URL }}
           ssh_private_key: ${{ secrets.SANDBOX_SSH_PRIVATE_KEY }}
           git_push_flags: "--force"
