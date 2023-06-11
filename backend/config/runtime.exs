@@ -1,5 +1,14 @@
 import Config
 
+defmodule RuntimeUtil do
+  def get_env_or_raise_error(var_name),
+    do:
+      System.get_env(var_name) ||
+        raise("""
+        environment variable #{var_name} is missing.
+        """)
+end
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration
@@ -21,6 +30,11 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  secret_key_base = RuntimeUtil.get_env_or_raise_error("SECRET_KEY_BASE")
+  frontend_url = RuntimeUtil.get_env_or_raise_error("FRONTEND_URL")
+  twilio_account_sid = RuntimeUtil.get_env_or_raise_error("TWILIO_ACCOUNT_SID")
+  twilio_auth_token = RuntimeUtil.get_env_or_raise_error("TWILIO_AUTH_TOKEN")
+
   # database_url =
   #   System.get_env("DATABASE_URL") ||
   #     raise """
@@ -41,19 +55,6 @@ if config_env() == :prod do
   # want to use a different value for prod and you most likely don't want
   # to check this value into version control, so we use an environment
   # variable instead.
-  secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
-
-  frontend_url =
-    System.get_env("FRONTEND_URL") ||
-      raise """
-      environment variable FRONTEND_URL is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
 
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
@@ -70,6 +71,19 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base,
     check_origin: [frontend_url]
+
+  config :micro_chat, MicroChat.API.TwilioAPIClient,
+    account_sid: twilio_account_sid,
+    auth_token: twilio_auth_token
+
+  config :micro_chat, MicroChat.WebRTC,
+    ice_servers_provider: MicroChat.WebRTC.IceServersProviderTwilio
+
+  config :phoenix, :filter_parameters, ["password", "secret", "session_key", "token"]
+
+  config :micro_chat, :children, [
+    {MicroChat.Store.TwilioIceServersStore, []}
+  ]
 
   # ## SSL Support
   #

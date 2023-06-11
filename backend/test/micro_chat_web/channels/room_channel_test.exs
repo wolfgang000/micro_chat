@@ -1,5 +1,7 @@
 defmodule MicroChatWeb.RoomChannelTest do
   use MicroChatWeb.ChannelCase
+  import Mox
+  setup :set_mox_from_context
 
   setup do
     {:ok, _, socket} =
@@ -23,5 +25,42 @@ defmodule MicroChatWeb.RoomChannelTest do
       "username" => ^username,
       "created_at" => _
     })
+  end
+
+  test "get ice_server(google)", %{socket: socket} do
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderGoogle
+    )
+
+    ref = push(socket, "get_ice_servers", %{})
+
+    assert_reply ref, :ok, %{
+      "iceServers" => [
+        %{"urls" => ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]}
+      ]
+    }
+  end
+
+  test "get ice_server(twilo)", %{socket: socket} do
+    Mox.stub_with(
+      MicroChat.API.TwilioAPIClientMock,
+      MicroChat.API.TwilioAPIClientStub
+    )
+
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderTwilio
+    )
+
+    start_supervised!(MicroChat.Store.TwilioIceServersStore)
+
+    ref = push(socket, "get_ice_servers", %{})
+
+    assert_reply ref, :ok, %{
+      "ice_servers" => [
+        %{"url" => "stun:example.twilio.com:3478", "urls" => "stun:example.twilio.com:3478"} | _
+      ]
+    }
   end
 end

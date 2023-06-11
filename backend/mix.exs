@@ -41,6 +41,7 @@ defmodule MicroChat.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.2"},
+      {:httpoison, "~> 2.1"},
       {:phoenix_ecto, "~> 4.4"},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.6"},
@@ -51,7 +52,8 @@ defmodule MicroChat.MixProject do
       {:plug_checkup, "~> 0.6.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:mox, "~> 1.0", only: :test}
     ]
   end
 
