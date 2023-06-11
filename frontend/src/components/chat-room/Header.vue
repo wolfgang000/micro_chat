@@ -6,10 +6,10 @@ import { computed } from 'vue'
 const roomStorePinia = useRoomStore()
 
 const onStartCallButtonClick = async () => {
-  roomStorePinia.startCallAsCallerPart1()
+  roomStorePinia.startCallAsCaller()
 }
 const onJoinCallButtonClick = async () => {
-  roomStorePinia.joinCallAsCalleePart1()
+  roomStorePinia.joinCallAsCallee()
 }
 
 const onLeaveCallButtonClick = async () => {

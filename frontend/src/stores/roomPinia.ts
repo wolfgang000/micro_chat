@@ -25,13 +25,13 @@ export const useRoomStore = defineStore('room', {
     setRoomTopic(value: string) {
       this.roomTopic = value
     },
-    startCallAsCallerPart1() {
+    startCallAsCaller() {
       this.activateVideoChat().then(() => {
         this.isVideoChatActivated = true
         this.wasVideoActivateByCurrentUser = true
       })
     },
-    joinCallAsCalleePart1() {
+    joinCallAsCallee() {
       this.activateVideoChat().then(() => {
         this.isVideoChatActivated = true
         this.wasVideoActivateByCurrentUser = false
