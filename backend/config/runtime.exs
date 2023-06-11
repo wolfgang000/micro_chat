@@ -72,7 +72,7 @@ if config_env() == :prod do
     secret_key_base: secret_key_base,
     check_origin: [frontend_url]
 
-  config :twilio,
+  config :micro_chat, MicroChat.API.TwilioAPIClient,
     account_sid: twilio_account_sid,
     auth_token: twilio_auth_token
 

@@ -6,8 +6,12 @@ defmodule MicroChat.API.TwilioAPIClient do
   @behaviour MicroChat.API.TwilioAPIClientBehaviour
   @base_uri "https://api.twilio.com"
 
-  defp account_sid, do: Application.fetch_env!(:twilio, :account_sid)
-  defp auth_token, do: Application.fetch_env!(:twilio, :auth_token)
+  defp account_sid,
+    do: Application.fetch_env!(:micro_chat, MicroChat.API.TwilioAPIClient)[:account_sid]
+
+  defp auth_token,
+    do: Application.fetch_env!(:micro_chat, MicroChat.API.TwilioAPIClient)[:auth_token]
+
   defp basic_auth_token, do: Base.encode64("#{account_sid()}:#{auth_token()}")
 
   defp headers() do
