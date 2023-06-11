@@ -15,25 +15,16 @@ const peers = ref(
   }[]
 )
 
+const roomStorePinia = useRoomStore()
+
 const createPeer = (username: string) => {
   const peer = {
     remoteStream: new MediaStream(),
     username: username,
-    pc: new RTCPeerConnection(servers),
+    pc: new RTCPeerConnection(roomStorePinia.peerConnectionConfig),
     element_id: `remote-user-${username}`
   }
   return peer
-}
-
-const roomStorePinia = useRoomStore()
-
-const servers = {
-  iceServers: [
-    {
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-    }
-  ],
-  iceCandidatePoolSize: 10
 }
 
 onMounted(async () => {
@@ -41,11 +32,13 @@ onMounted(async () => {
   const promise = roomStorePinia.setVideoElementCurrentUser(
     document.getElementById('currentUserVideoElement') as HTMLVideoElement
   )
+  const fetchAndSetPeerConnectionConfigPromise = roomStorePinia.fetchAndSetPeerConnectionConfig()
 
   if (roomStorePinia.wasVideoActivateByCurrentUser) {
     channel.push('start_call', {})
   } else {
     const localStream = await promise
+    await fetchAndSetPeerConnectionConfigPromise
     const inCallUsers = roomStore.connectedUsers.filter((user) => user.is_in_call)
     channel.push('join_call', {})
 
@@ -117,6 +110,7 @@ onMounted(async () => {
     async ({ offer: offer, username: username }: { offer: any; username: string }) => {
       // asume 1 connection
       const localStream = await promise
+      await fetchAndSetPeerConnectionConfigPromise
       const peer = peers.value.find((peer) => peer.username === username) || createPeer(username)
 
       // Push tracks from your local stream to the peer connection

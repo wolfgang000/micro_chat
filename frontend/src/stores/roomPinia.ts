@@ -11,10 +11,14 @@ export const useRoomStore = defineStore('room', {
       roomTopic: '',
       isVideoChatActivated: false,
       wasVideoActivateByCurrentUser: false,
-      videoElementCurrentUser: videoElementCurrentUser as HTMLVideoElement
+      videoElementCurrentUser: videoElementCurrentUser as HTMLVideoElement,
+      peerConnectionConfig: null as any
     }
   },
   actions: {
+    setPeerConnectionConfig(value: any) {
+      this.peerConnectionConfig = value
+    },
     setRoomName(value: string) {
       this.roomName = value
     },
@@ -41,6 +45,7 @@ export const useRoomStore = defineStore('room', {
       channel.off(`ice_candidate:${userStore.username}`)
       channel.push('leave_call', {})
       this.isVideoChatActivated = false
+      this.wasVideoActivateByCurrentUser = false
     },
     activateVideoChat() {
       return navigator.mediaDevices
@@ -60,6 +65,20 @@ export const useRoomStore = defineStore('room', {
           this.videoElementCurrentUser.muted = true
           return localStream
         })
+    },
+    fetchAndSetPeerConnectionConfig() {
+      const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+
+      return new Promise((resolve, reject) => {
+        return channel
+          .push('get_ice_servers', {})
+          .receive('ok', (ice_servers) => {
+            console.log(ice_servers)
+            resolve(ice_servers)
+          })
+          .receive('error', (reasons) => reject(reasons))
+          .receive('timeout', () => reject('Networking issue...'))
+      })
     }
   }
 })
