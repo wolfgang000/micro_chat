@@ -19,33 +19,8 @@ onMounted(async () => {
       .receive('timeout', () => reject('Networking issue...'))
   })
 
-  console.log(ice_servers)
-
   const configuration = {
-    iceServers: [
-      {
-        url: 'stun:global.stun.twilio.com:3478',
-        urls: 'stun:global.stun.twilio.com:3478'
-      },
-      {
-        credential: 'ocWtA4W2Vwe9lyDCTVGv5QvZKVUqWZaOBpE+L6qFAbE=',
-        url: 'turn:global.turn.twilio.com:3478?transport=udp',
-        urls: 'turn:global.turn.twilio.com:3478?transport=udp',
-        username: '6edbf0645bfad368956d454417b37b43632670d7f884a220842ce091eedd328b'
-      },
-      {
-        credential: 'ocWtA4W2Vwe9lyDCTVGv5QvZKVUqWZaOBpE+L6qFAbE=',
-        url: 'turn:global.turn.twilio.com:3478?transport=tcp',
-        urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
-        username: '6edbf0645bfad368956d454417b37b43632670d7f884a220842ce091eedd328b'
-      },
-      {
-        credential: 'ocWtA4W2Vwe9lyDCTVGv5QvZKVUqWZaOBpE+L6qFAbE=',
-        url: 'turn:global.turn.twilio.com:443?transport=tcp',
-        urls: 'turn:global.turn.twilio.com:443?transport=tcp',
-        username: '6edbf0645bfad368956d454417b37b43632670d7f884a220842ce091eedd328b'
-      }
-    ]
+    iceServers: ice_servers
   }
   let room: any
   let pc: RTCPeerConnection
