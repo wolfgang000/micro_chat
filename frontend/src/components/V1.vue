@@ -130,7 +130,9 @@ onMounted(async () => {
   }
 
   function localDescCreated(desc: RTCLocalSessionDescriptionInit) {
-    pc.setLocalDescription(desc, () => sendMessage({ sdp: pc.localDescription }), onError)
+    pc.setLocalDescription(desc)
+      .then(() => sendMessage({ sdp: pc.localDescription }))
+      .catch(onError)
   }
 })
 </script>
