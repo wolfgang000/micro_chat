@@ -119,28 +119,6 @@ onMounted(async () => {
         pc.addIceCandidate(new RTCIceCandidate(message.candidate)).catch(onError)
       }
     })
-
-    // room.on('data', (message: any, client: any) => {
-    //   // Message was sent by us
-    //   if (client.id === drone.clientId) {
-    //     return
-    //   }
-
-    //   if (message.sdp) {
-    //     // This is called after receiving an offer or answer from another peer
-    //     pc.setRemoteDescription(new RTCSessionDescription(message))
-    //       .then(() => {
-    //         // When receiving an offer lets answer it
-    //         if (pc.remoteDescription!.type === 'offer') {
-    //           pc.createAnswer().then(localDescCreated).catch(onError)
-    //         }
-    //       })
-    //       .catch(onError)
-    //   } else if (message.candidate) {
-    //     // Add the new ICE candidate to our connections remote description
-    //     pc.addIceCandidate(new RTCIceCandidate(message.candidate)).catch(onError)
-    //   }
-    // })
   }
 
   function localDescCreated(desc: RTCLocalSessionDescriptionInit) {
