@@ -14,6 +14,7 @@ defmodule MicroChatWeb.RoomChannel do
   def handle_info(:after_join, socket) do
     {:ok, _} =
       Presence.track(socket, socket.assigns.user_id, %{
+        is_in_call: false,
         is_typing: false,
         username: socket.assigns.username
       })
@@ -44,13 +45,47 @@ defmodule MicroChatWeb.RoomChannel do
   @impl true
   def handle_in("user:typing", %{"typing" => typing}, socket) do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_typing: typing})
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in("start_call", _payload, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
 
     {:ok, _} =
       Presence.update(
         socket,
         socket.assigns.user_id,
-        meta |> Map.put(:is_typing, typing)
+        meta |> Map.put(:is_in_call, true)
       )
+
+    broadcast(socket, "a_call_was_started", %{
+      "username" => socket.assigns.username
+    })
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in(
+        "leave_call",
+        _payload,
+        socket
+      ) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+
+    {:ok, _} =
+      Presence.update(
+        socket,
+        socket.assigns.user_id,
+        meta |> Map.put(:is_in_call, false)
+      )
+
+    broadcast(socket, "a_user_has_left_the_call", %{
+      "username" => socket.assigns.username
+    })
 
     {:reply, :ok, socket}
   end

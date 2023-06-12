@@ -1,8 +1,22 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
 import { userStore } from '@/stores/user'
-</script>
+import IconPhone from '../icons/IconPhone.vue'
+import { computed } from 'vue'
 
+const onStartCallButtonClick = async () => {
+  roomStore.startCall()
+}
+const onJoinCallButtonClick = async () => {
+  roomStore.joinCall()
+}
+const onLeaveCallButtonClick = async () => {
+  roomStore.leaveCall()
+}
+const inCallUsers = computed(() => {
+  return roomStore.connectedUsers.filter((user) => user.is_in_call)
+})
+</script>
 <template>
   <div>
     <div class="contact-header d-flex align-items-center">
@@ -12,16 +26,48 @@ import { userStore } from '@/stores/user'
             ><strong>{{ roomStore.roomName }}</strong></a
           >
         </div>
-        <button
-          type="button"
-          class="btn btn-light"
-          data-bs-toggle="modal"
-          data-bs-target="#membersOnlineModal"
-          id="membersOnlinebutton"
-        >
-          <span style="color: green" class="me-1">●</span>
-          {{ roomStore.connectedUsers.length }} Members online
-        </button>
+        <div>
+          <button
+            v-if="inCallUsers.length === 0"
+            id="startCallButton"
+            type="button"
+            class="btn btn-light me-2"
+            @click="onStartCallButtonClick"
+          >
+            <IconPhone />
+          </button>
+          <button
+            v-else-if="inCallUsers.length > 0 && roomStore.isVideoChatActivated"
+            id="leaveCallButton"
+            type="button"
+            class="btn btn-danger me-2"
+            @click="onLeaveCallButtonClick"
+          >
+            <IconPhone class="rotated-phone" />
+          </button>
+
+          <button
+            v-else-if="inCallUsers.length > 0"
+            id="joinCallButton"
+            type="button"
+            class="btn btn-success me-2"
+            @click="onJoinCallButtonClick"
+          >
+            <IconPhone class="me-2" />
+            Join Call
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-light"
+            data-bs-toggle="modal"
+            data-bs-target="#membersOnlineModal"
+            id="membersOnlinebutton"
+          >
+            <span style="color: green" class="me-1">●</span>
+            {{ roomStore.connectedUsers.length }} Members online
+          </button>
+        </div>
       </div>
     </div>
     <!-- Modal -->
@@ -67,5 +113,8 @@ import { userStore } from '@/stores/user'
   background: rgba(247, 249, 250, 1);
   box-shadow: 0 10px 6px -6px #ccc;
   z-index: 1;
+}
+.rotated-phone {
+  transform: rotate(135deg);
 }
 </style>
