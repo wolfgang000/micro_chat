@@ -110,21 +110,17 @@ onMounted(async () => {
 
       if (message.sdp) {
         // This is called after receiving an offer or answer from another peer
-        console.log('message.sdp', message.sdp)
-        pc.setRemoteDescription(
-          new RTCSessionDescription(message.sdp),
-          () => {
+        pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+          .then(() => {
             // When receiving an offer lets answer it
             if (pc.remoteDescription!.type === 'offer') {
               pc.createAnswer().then(localDescCreated).catch(onError)
             }
-          },
-          onError
-        )
+          })
+          .catch(onError)
       } else if (message.candidate) {
         // Add the new ICE candidate to our connections remote description
-        console.log('message.candidate', message.candidate)
-        pc.addIceCandidate(new RTCIceCandidate(message.candidate), onSuccess, onError)
+        pc.addIceCandidate(new RTCIceCandidate(message.candidate)).catch(onError)
       }
     })
   }
