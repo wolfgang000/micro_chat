@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
 import { onMounted } from 'vue'
+import { socketConnection } from '@/api'
 
-onMounted(() => {
+onMounted(async () => {
   // @ts-ignore
   const drone = new ScaleDrone('yiS12Ts5RdNhebyM')
   const roomName = 'observable-' + roomStore.roomTopic
+  const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
+
+  const ice_servers = await new Promise((resolve, reject) => {
+    return channel
+      .push('get_ice_servers', {})
+      .receive('ok', (ice_servers) => {
+        resolve(ice_servers)
+      })
+      .receive('error', (reasons) => reject(reasons))
+      .receive('timeout', () => reject('Networking issue...'))
+  })
+
+  console.log(ice_servers)
 
   const configuration = {
     iceServers: [
