@@ -3,6 +3,7 @@ import { roomStore } from '@/stores/room'
 import { onMounted } from 'vue'
 
 onMounted(() => {
+  // @ts-ignore
   const drone = new ScaleDrone('yiS12Ts5RdNhebyM')
   const roomName = 'observable-' + roomStore.roomTopic
 
