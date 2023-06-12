@@ -50,4 +50,15 @@ defmodule MicroChatWeb.RoomChannel do
 
     {:reply, :ok, socket}
   end
+
+  @impl true
+  def handle_in(
+        "data",
+        payload,
+        socket
+      ) do
+    broadcast_from(socket, "data", payload |> Map.put("username", socket.assigns.username))
+
+    {:noreply, socket}
+  end
 end

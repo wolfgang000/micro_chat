@@ -2,6 +2,7 @@
 import { roomStore } from '@/stores/room'
 import { onMounted } from 'vue'
 import { socketConnection } from '@/api'
+import { userStore } from '@/stores/user'
 
 onMounted(async () => {
   // @ts-ignore
@@ -52,10 +53,7 @@ onMounted(async () => {
 
   // Send signaling data via Scaledrone
   function sendMessage(message: any) {
-    drone.publish({
-      room: roomName,
-      message
-    })
+    channel.push(`data`, message)
   }
 
   function startWebRTC(isOfferer: boolean) {
@@ -99,11 +97,12 @@ onMounted(async () => {
       }, onError)
 
     // Listen to signaling data from Scaledrone
-    room.on('data', (message: any, client: any) => {
-      // Message was sent by us
-      if (client.id === drone.clientId) {
+
+    channel.on(`data`, (message: any) => {
+      if (userStore.username === message.username) {
         return
       }
+      console.log()
 
       if (message.sdp) {
         // This is called after receiving an offer or answer from another peer
@@ -120,6 +119,28 @@ onMounted(async () => {
         pc.addIceCandidate(new RTCIceCandidate(message.candidate)).catch(onError)
       }
     })
+
+    // room.on('data', (message: any, client: any) => {
+    //   // Message was sent by us
+    //   if (client.id === drone.clientId) {
+    //     return
+    //   }
+
+    //   if (message.sdp) {
+    //     // This is called after receiving an offer or answer from another peer
+    //     pc.setRemoteDescription(new RTCSessionDescription(message))
+    //       .then(() => {
+    //         // When receiving an offer lets answer it
+    //         if (pc.remoteDescription!.type === 'offer') {
+    //           pc.createAnswer().then(localDescCreated).catch(onError)
+    //         }
+    //       })
+    //       .catch(onError)
+    //   } else if (message.candidate) {
+    //     // Add the new ICE candidate to our connections remote description
+    //     pc.addIceCandidate(new RTCIceCandidate(message.candidate)).catch(onError)
+    //   }
+    // })
   }
 
   function localDescCreated(desc: RTCLocalSessionDescriptionInit) {
