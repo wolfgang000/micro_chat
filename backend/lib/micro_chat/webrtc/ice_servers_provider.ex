@@ -1,6 +1,6 @@
 defmodule MicroChat.WebRTC.IceServersProviderBehaviour do
   @moduledoc false
-  @callback get_ice_servers() :: map()
+  @callback get_ice_servers() :: [map()]
 end
 
 defmodule MicroChat.WebRTC.IceServersProvider do
