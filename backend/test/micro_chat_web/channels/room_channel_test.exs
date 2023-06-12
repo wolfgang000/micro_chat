@@ -35,11 +35,9 @@ defmodule MicroChatWeb.RoomChannelTest do
 
     ref = push(socket, "get_ice_servers", %{})
 
-    assert_reply ref, :ok, %{
-      "iceServers" => [
-        %{"urls" => ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]}
-      ]
-    }
+    assert_reply ref, :ok, [
+      %{"urls" => ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"]}
+    ]
   end
 
   test "get ice_server(twilo)", %{socket: socket} do
@@ -57,10 +55,8 @@ defmodule MicroChatWeb.RoomChannelTest do
 
     ref = push(socket, "get_ice_servers", %{})
 
-    assert_reply ref, :ok, %{
-      "ice_servers" => [
-        %{"url" => "stun:example.twilio.com:3478", "urls" => "stun:example.twilio.com:3478"} | _
-      ]
-    }
+    assert_reply ref, :ok, [
+      %{"url" => "stun:example.twilio.com:3478", "urls" => "stun:example.twilio.com:3478"} | _
+    ]
   end
 end
