@@ -20,7 +20,7 @@ onMounted(async () => {
   })
 
   const configuration = {
-    iceServers: ice_servers
+    iceServers: ice_servers as any
   }
   let room: any
   let pc: RTCPeerConnection
