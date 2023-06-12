@@ -51,10 +51,7 @@ onMounted(async () => {
   })
 
   // Send signaling data via Scaledrone
-  function sendMessage(message: {
-    candidate?: RTCIceCandidate
-    sdp?: RTCSessionDescription | null
-  }) {
+  function sendMessage(message: any) {
     drone.publish({
       room: roomName,
       message
@@ -110,7 +107,7 @@ onMounted(async () => {
 
       if (message.sdp) {
         // This is called after receiving an offer or answer from another peer
-        pc.setRemoteDescription(new RTCSessionDescription(message.sdp))
+        pc.setRemoteDescription(new RTCSessionDescription(message))
           .then(() => {
             // When receiving an offer lets answer it
             if (pc.remoteDescription!.type === 'offer') {
@@ -127,7 +124,7 @@ onMounted(async () => {
 
   function localDescCreated(desc: RTCLocalSessionDescriptionInit) {
     pc.setLocalDescription(desc)
-      .then(() => sendMessage({ sdp: pc.localDescription }))
+      .then(() => sendMessage(desc))
       .catch(onError)
   }
 })
