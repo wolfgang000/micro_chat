@@ -11,6 +11,7 @@ import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
 import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
 import InputBox from '@/components/chat-room/InputBox.vue'
+import V1 from '@/components/V1.vue'
 
 const route = useRoute()
 const hasJoinedTheChannel = ref(false)
@@ -40,6 +41,7 @@ onUnmounted(() => {
     style="height: 100vh"
     v-if="hasJoinedTheChannel"
   >
+    <V1 />
     <ChatHeader />
     <ChatList />
     <TypingIndicator />
