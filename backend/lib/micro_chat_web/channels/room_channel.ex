@@ -66,7 +66,8 @@ defmodule MicroChatWeb.RoomChannel do
       "user_id" => socket.assigns.user_id
     })
 
-    {:reply, :ok, socket}
+    ice_servers = IceServersProvider.get_ice_servers()
+    {:reply, {:ok, %{"ice_servers" => ice_servers}}, socket}
   end
 
   @impl true
@@ -85,7 +86,8 @@ defmodule MicroChatWeb.RoomChannel do
       "user_id" => socket.assigns.user_id
     })
 
-    {:reply, :ok, socket}
+    ice_servers = IceServersProvider.get_ice_servers()
+    {:reply, {:ok, %{"ice_servers" => ice_servers}}, socket}
   end
 
   @impl true

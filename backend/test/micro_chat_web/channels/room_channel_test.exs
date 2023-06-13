@@ -60,4 +60,59 @@ defmodule MicroChatWeb.RoomChannelTest do
       %{"url" => "stun:example.twilio.com:3478", "urls" => "stun:example.twilio.com:3478"} | _
     ]
   end
+
+  test "start_call", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderGoogle
+    )
+
+    ref = push(socket, "user:start_call", %{})
+
+    assert_broadcast("call:started", %{
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+
+    assert_reply ref, :ok, %{
+      "ice_servers" => [_ | _]
+    }
+  end
+
+  test "join_call", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderGoogle
+    )
+
+    ref = push(socket, "user:join_call", %{})
+
+    assert_broadcast("call:user_joined", %{
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+
+    assert_reply ref, :ok, %{
+      "ice_servers" => [_ | _]
+    }
+  end
+
+  test "leave_call", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+
+    Mox.stub_with(
+      MicroChat.WebRTC.IceServersProviderMock,
+      MicroChat.WebRTC.IceServersProviderGoogle
+    )
+
+    push(socket, "user:leave_call", %{})
+    assert_broadcast("call:user_left", %{
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+  end
 end
