@@ -161,7 +161,7 @@ defmodule MicroChatWeb.RoomChannelTest do
   end
 
   test "user:typing", %{socket: socket} do
-    %{assigns: %{username: username, user_id: user_id}} = socket
+    %{assigns: %{user_id: user_id}} = socket
 
     assert_push "presence_state", %{
       ^user_id => %{
