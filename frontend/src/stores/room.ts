@@ -84,7 +84,6 @@ export const setupChannelPresenceCallbacks = (channelTopic: string) => {
       user.user_id = id
       return user
     })
-    console.log(connectedUsers)
     roomStore.setConnectedUsers(connectedUsers)
   })
 }
