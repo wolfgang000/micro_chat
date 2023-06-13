@@ -14,6 +14,7 @@ defmodule MicroChatWeb.RoomChannel do
   def handle_info(:after_join, socket) do
     {:ok, _} =
       Presence.track(socket, socket.assigns.user_id, %{
+        is_in_call: false,
         is_typing: false,
         username: socket.assigns.username
       })
@@ -30,7 +31,7 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("message.create", %{"body" => body} = _payload, socket) do
+  def handle_in("user:create_message", %{"body" => body} = _payload, socket) do
     broadcast(socket, "message.created", %{
       "username" => socket.assigns.username,
       "user_id" => socket.assigns.user_id,
@@ -44,13 +45,66 @@ defmodule MicroChatWeb.RoomChannel do
   @impl true
   def handle_in("user:typing", %{"typing" => typing}, socket) do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+    {:ok, _} = Presence.update(socket, socket.assigns.user_id, %{meta | is_typing: typing})
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in("user:start_call", _payload, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
 
     {:ok, _} =
       Presence.update(
         socket,
         socket.assigns.user_id,
-        meta |> Map.put(:is_typing, typing)
+        meta |> Map.put(:is_in_call, true)
       )
+
+    broadcast(socket, "call:started", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
+
+    ice_servers = IceServersProvider.get_ice_servers()
+    {:reply, {:ok, %{"ice_servers" => ice_servers}}, socket}
+  end
+
+  @impl true
+  def handle_in("user:join_call", _payload, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+
+    {:ok, _} =
+      Presence.update(
+        socket,
+        socket.assigns.user_id,
+        meta |> Map.put(:is_in_call, true)
+      )
+
+    broadcast(socket, "call:user_joined", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
+
+    ice_servers = IceServersProvider.get_ice_servers()
+    {:reply, {:ok, %{"ice_servers" => ice_servers}}, socket}
+  end
+
+  @impl true
+  def handle_in("user:leave_call", _payload, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+
+    {:ok, _} =
+      Presence.update(
+        socket,
+        socket.assigns.user_id,
+        meta |> Map.put(:is_in_call, false)
+      )
+
+    broadcast(socket, "call:user_left", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
 
     {:reply, :ok, socket}
   end

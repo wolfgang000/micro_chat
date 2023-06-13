@@ -6,11 +6,14 @@ import { reactive } from 'vue'
 import { userStore } from './user'
 
 export let roomPresences = {}
+export let localMediaStream: MediaStream
 export const roomStore = reactive({
   roomTopic: '',
   roomName: '',
   connectedUsers: [] as IConnectedUser[],
   listItems: [] as IChatListItem[],
+  isVideoChatActivated: false,
+  wasVideoActivateByCurrentUser: false,
   setConnectedUsers(value: IConnectedUser[]) {
     this.connectedUsers = value
   },
@@ -25,6 +28,38 @@ export const roomStore = reactive({
   },
   setRoomTopic(value: string) {
     this.roomTopic = value
+  },
+  startCall() {
+    this.requestMediaPermissions().then((webCamMediaStream) => {
+      localMediaStream = webCamMediaStream!
+      this.isVideoChatActivated = true
+      this.wasVideoActivateByCurrentUser = true
+      const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+      channel.push('user:start_call', {})
+    })
+  },
+  joinCall() {
+    this.requestMediaPermissions().then((webCamMediaStream) => {
+      localMediaStream = webCamMediaStream!
+      this.isVideoChatActivated = true
+      this.wasVideoActivateByCurrentUser = false
+      const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+      channel.push('user:join_call', {})
+    })
+  },
+  leaveCall() {
+    this.isVideoChatActivated = false
+    this.wasVideoActivateByCurrentUser = false
+    localMediaStream.getTracks().forEach((track) => {
+      track.stop()
+    })
+    const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+    channel.push('user:leave_call', {})
+  },
+  requestMediaPermissions() {
+    return navigator.mediaDevices.getUserMedia({ video: true, audio: true }).catch((error) => {
+      console.error('error', error)
+    })
   }
 })
 

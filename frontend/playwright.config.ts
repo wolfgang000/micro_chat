@@ -48,20 +48,27 @@ const config: PlaywrightTestConfig = {
     {
       name: 'chromium',
       use: {
-        ...devices['Desktop Chrome']
+        ...devices['Desktop Chrome'],
+        permissions: ['microphone', 'camera'],
+        headless: false,
+        launchOptions: {
+          args: [!!process.env.CI ? '--headless=new' : '', '--use-fake-device-for-media-stream']
+        }
       }
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox']
-      }
+      },
+      testIgnore: '**video**'
     },
     {
       name: 'webkit',
       use: {
         ...devices['Desktop Safari']
-      }
+      },
+      testIgnore: '**video**'
     }
 
     /* Test against mobile viewports. */
