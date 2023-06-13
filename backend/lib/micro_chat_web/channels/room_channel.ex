@@ -51,7 +51,7 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("start_call", _payload, socket) do
+  def handle_in("user:start_call", _payload, socket) do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
 
     {:ok, _} =
@@ -61,19 +61,35 @@ defmodule MicroChatWeb.RoomChannel do
         meta |> Map.put(:is_in_call, true)
       )
 
-    broadcast(socket, "a_call_was_started", %{
-      "username" => socket.assigns.username
+    broadcast(socket, "call:started", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
     })
 
     {:reply, :ok, socket}
   end
 
   @impl true
-  def handle_in(
-        "leave_call",
-        _payload,
-        socket
-      ) do
+  def handle_in("user:join_call", _payload, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+
+    {:ok, _} =
+      Presence.update(
+        socket,
+        socket.assigns.user_id,
+        meta |> Map.put(:is_in_call, true)
+      )
+
+    broadcast(socket, "call:user_joined", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in("user:leave_call", _payload, socket) do
     %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
 
     {:ok, _} =
@@ -83,8 +99,9 @@ defmodule MicroChatWeb.RoomChannel do
         meta |> Map.put(:is_in_call, false)
       )
 
-    broadcast(socket, "a_user_has_left_the_call", %{
-      "username" => socket.assigns.username
+    broadcast(socket, "call:user_left", %{
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
     })
 
     {:reply, :ok, socket}

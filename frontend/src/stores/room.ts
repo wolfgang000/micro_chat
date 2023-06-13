@@ -35,7 +35,7 @@ export const roomStore = reactive({
       this.isVideoChatActivated = true
       this.wasVideoActivateByCurrentUser = true
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
-      channel.push('start_call', {})
+      channel.push('user:start_call', {})
     })
   },
   joinCall() {
@@ -43,6 +43,8 @@ export const roomStore = reactive({
       localMediaStream = webCamMediaStream!
       this.isVideoChatActivated = true
       this.wasVideoActivateByCurrentUser = false
+      const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+      channel.push('user:join_call', {})
     })
   },
   leaveCall() {
@@ -52,7 +54,7 @@ export const roomStore = reactive({
       track.stop()
     })
     const channel = socketConnection.getOrCreateChannel(this.roomTopic)
-    channel.push('leave_call', {})
+    channel.push('user:leave_call', {})
   },
   requestMediaPermissions() {
     return navigator.mediaDevices.getUserMedia({ video: true, audio: true }).catch((error) => {
