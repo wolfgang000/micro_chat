@@ -1,0 +1,41 @@
+name: Production Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Ref (empty => use selected branch)
+        required: false
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to backend
+        uses: dokku/github-action@master
+        with:
+          branch: main
+          git_remote_url: ${{ secrets.PRODUCTION_BACKEND_GIT_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+          git_push_flags: "--force"
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloning repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to Frontend
+        uses: dokku/github-action@master
+        with:
+          branch: main
+          git_remote_url: ${{ secrets.PRODUCTION_FRONTEND_GIT_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+          git_push_flags: "--force"
