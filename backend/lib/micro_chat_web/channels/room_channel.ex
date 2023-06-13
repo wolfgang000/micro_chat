@@ -31,7 +31,7 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("message.create", %{"body" => body} = _payload, socket) do
+  def handle_in("user:create_message", %{"body" => body} = _payload, socket) do
     broadcast(socket, "message.created", %{
       "username" => socket.assigns.username,
       "user_id" => socket.assigns.user_id,
