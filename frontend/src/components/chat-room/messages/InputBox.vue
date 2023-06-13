@@ -37,7 +37,7 @@ const onKeyDown = () => {
 
 const onSubmit = () => {
   userStopsTyping()
-  channel.push('client.new_message', { body: message.value })
+  channel.push('message.create', { body: message.value })
   message.value = ''
 }
 </script>

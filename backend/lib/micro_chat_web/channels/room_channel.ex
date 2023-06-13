@@ -7,7 +7,7 @@ defmodule MicroChatWeb.RoomChannel do
   def join("room:" <> _room_id, _payload, socket) do
     send(self(), :after_join)
 
-    {:ok, socket}
+    {:ok, %{user_id: socket.assigns.user_id}, socket}
   end
 
   @impl true
@@ -30,9 +30,10 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("client.new_message", %{"body" => body} = _payload, socket) do
-    broadcast(socket, "server.new_message", %{
+  def handle_in("message.create", %{"body" => body} = _payload, socket) do
+    broadcast(socket, "message.created", %{
       "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id,
       "body" => body,
       "created_at" => DateTime.utc_now() |> DateTime.to_iso8601()
     })
@@ -42,11 +43,14 @@ defmodule MicroChatWeb.RoomChannel do
 
   @impl true
   def handle_in("user:typing", %{"typing" => typing}, socket) do
+    %{metas: [meta | _]} = Presence.get_by_key(socket, socket.assigns.user_id)
+
     {:ok, _} =
-      Presence.update(socket, socket.assigns.user_id, %{
-        is_typing: typing,
-        username: socket.assigns.username
-      })
+      Presence.update(
+        socket,
+        socket.assigns.user_id,
+        meta |> Map.put(:is_typing, typing)
+      )
 
     {:reply, :ok, socket}
   end

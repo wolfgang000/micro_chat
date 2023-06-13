@@ -2,6 +2,7 @@ export interface IMessage {
   body: string
   created_at: string
   username: string
+  user_id: string
 }
 
 export interface IChatEvent {
@@ -24,4 +25,5 @@ export interface IConnectedUser {
   phx_ref: string
   username: string
   is_typing: boolean
+  user_id: string
 }
