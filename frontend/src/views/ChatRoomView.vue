@@ -6,6 +6,7 @@ import {
   roomStore,
   setupChannelPresenceCallbacks as setupRoomChannelCallbacks
 } from '@/stores/room'
+import { userStore } from '@/stores/user'
 
 import ChatHeader from '@/components/chat-room/Header.vue'
 import MessagesSection from '@/components/chat-room/MessagesSection.vue'
@@ -20,8 +21,9 @@ socketConnection.getOrCreateChannel(channelTopic)
 setupRoomChannelCallbacks(channelTopic)
 
 onBeforeMount(async () => {
-  await socketConnection.channelJoin(channelTopic).then(() => {
+  await socketConnection.channelJoin(channelTopic).then((resp) => {
     roomStore.setRoomName(`#${roomId}`)
+    userStore.userId = resp.user_id
     document.title = `Room #${roomId}`
     hasJoinedTheChannel.value = true
   })

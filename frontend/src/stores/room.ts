@@ -57,11 +57,11 @@ const onLeave = (id: any, current: any, leftPres: any) => {
 }
 
 export const setupChannelPresenceCallbacks = (channelTopic: string) => {
-  socketConnection.channelOn(channelTopic, 'server.new_message', (message: IMessage) => {
+  socketConnection.channelOn(channelTopic, 'message.created', (message: IMessage) => {
     message.created_at = dateFormatWithFormat(message.created_at)
 
     const itemType =
-      message.username === userStore.username
+      message.user_id === userStore.userId
         ? ChatListItemType.MessageSent
         : ChatListItemType.MessageReceived
 
@@ -71,7 +71,8 @@ export const setupChannelPresenceCallbacks = (channelTopic: string) => {
   socketConnection.channelOn(channelTopic, 'presence_state', (state) => {
     roomPresences = {}
     roomPresences = Presence.syncState(roomPresences, state)
-    const connectedUsers = Presence.list(roomPresences, (_id, { metas: [user, ...rest] }) => {
+    const connectedUsers = Presence.list(roomPresences, (id, { metas: [user, ...rest] }) => {
+      user.user_id = id
       return user
     })
     roomStore.setConnectedUsers(connectedUsers)
@@ -79,9 +80,11 @@ export const setupChannelPresenceCallbacks = (channelTopic: string) => {
 
   socketConnection.channelOn(channelTopic, 'presence_diff', (diff) => {
     const presences = Presence.syncDiff(roomPresences, diff, onJoin, onLeave)
-    const connectedUsers = Presence.list(presences, (_id, { metas: [user, ...rest] }) => {
+    const connectedUsers = Presence.list(presences, (id, { metas: [user, ...rest] }) => {
+      user.user_id = id
       return user
     })
+    console.log(connectedUsers)
     roomStore.setConnectedUsers(connectedUsers)
   })
 }

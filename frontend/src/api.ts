@@ -55,14 +55,14 @@ class SocketConnection {
     channel.on(event, callback)
   }
 
-  channelJoin(topic: string): Promise<void> {
+  channelJoin(topic: string) {
     const channel = this.#channels.get(topic) as Channel
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<{ user_id: string }>((resolve, reject) => {
       channel
         .join()
-        .receive('ok', (resp: any): void => {
-          resolve()
+        .receive('ok', (resp: { user_id: string }): void => {
+          resolve(resp)
           console.log('Joined successfully', resp)
         })
         .receive('error', (resp: any): void => {

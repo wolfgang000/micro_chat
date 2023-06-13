@@ -2,6 +2,7 @@ export interface IMessage {
   body: string
   created_at: string
   username: string
+  user_id: string
 }
 
 export interface IChatEvent {
