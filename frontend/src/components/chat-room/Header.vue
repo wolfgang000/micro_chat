@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { roomStore } from '@/stores/room'
+import { userStore } from '@/stores/user'
 </script>
 
 <template>
@@ -45,7 +46,7 @@ import { roomStore } from '@/stores/room'
           <div class="modal-body">
             <ul class="list-group list-group-flush">
               <li class="list-group-item" v-for="user in roomStore.connectedUsers">
-                {{ user.username }}
+                {{ user.username }} <strong v-if="user.user_id == userStore.userId">(You)</strong>
               </li>
             </ul>
           </div>
