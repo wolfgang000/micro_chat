@@ -7,10 +7,8 @@ import {
   setupChannelPresenceCallbacks as setupRoomChannelCallbacks
 } from '@/stores/room'
 
-import ChatList from '@/components/chat-room/List.vue'
 import ChatHeader from '@/components/chat-room/Header.vue'
-import TypingIndicator from '@/components/chat-room/TypingIndicator.vue'
-import InputBox from '@/components/chat-room/InputBox.vue'
+import MessagesSection from '@/components/chat-room/MessagesSection.vue'
 
 const route = useRoute()
 const hasJoinedTheChannel = ref(false)
@@ -35,20 +33,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="chat-room-main-container d-flex flex-column"
-    style="height: 100vh"
-    v-if="hasJoinedTheChannel"
-  >
+  <div class="chat-room-main-container d-flex flex-column" v-if="hasJoinedTheChannel">
     <ChatHeader />
-    <ChatList />
-    <TypingIndicator />
-    <InputBox />
+    <MessagesSection />
   </div>
 </template>
 
 <style scoped>
 .chat-room-main-container {
   background: #f7f9fa;
+  height: 100vh;
 }
 </style>
