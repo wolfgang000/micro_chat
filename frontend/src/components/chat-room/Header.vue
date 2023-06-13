@@ -3,6 +3,7 @@ import { roomStore } from '@/stores/room'
 import { userStore } from '@/stores/user'
 import IconPhone from '../icons/IconPhone.vue'
 import { computed } from 'vue'
+import env from '@/env'
 
 const onStartCallButtonClick = async () => {
   roomStore.startCall()
@@ -27,36 +28,37 @@ const inCallUsers = computed(() => {
           >
         </div>
         <div>
-          <button
-            v-if="inCallUsers.length === 0"
-            id="startCallButton"
-            type="button"
-            class="btn btn-light me-2"
-            @click="onStartCallButtonClick"
-          >
-            <IconPhone />
-          </button>
-          <button
-            v-else-if="inCallUsers.length > 0 && roomStore.isVideoChatActivated"
-            id="leaveCallButton"
-            type="button"
-            class="btn btn-danger me-2"
-            @click="onLeaveCallButtonClick"
-          >
-            <IconPhone class="rotated-phone" />
-          </button>
+          <span v-if="env.feature_flag_videocall">
+            <button
+              v-if="inCallUsers.length === 0"
+              id="startCallButton"
+              type="button"
+              class="btn btn-light me-2"
+              @click="onStartCallButtonClick"
+            >
+              <IconPhone />
+            </button>
+            <button
+              v-else-if="inCallUsers.length > 0 && roomStore.isVideoChatActivated"
+              id="leaveCallButton"
+              type="button"
+              class="btn btn-danger me-2"
+              @click="onLeaveCallButtonClick"
+            >
+              <IconPhone class="rotated-phone" />
+            </button>
 
-          <button
-            v-else-if="inCallUsers.length > 0"
-            id="joinCallButton"
-            type="button"
-            class="btn btn-success me-2"
-            @click="onJoinCallButtonClick"
-          >
-            <IconPhone class="me-2" />
-            Join Call
-          </button>
-
+            <button
+              v-else-if="inCallUsers.length > 0"
+              id="joinCallButton"
+              type="button"
+              class="btn btn-success me-2"
+              @click="onJoinCallButtonClick"
+            >
+              <IconPhone class="me-2" />
+              Join Call
+            </button>
+          </span>
           <button
             type="button"
             class="btn btn-light"
