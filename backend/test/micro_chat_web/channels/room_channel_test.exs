@@ -12,6 +12,13 @@ defmodule MicroChatWeb.RoomChannelTest do
       })
       |> subscribe_and_join(MicroChatWeb.RoomChannel, "room:lobby")
 
+    on_exit(fn ->
+      for pid <- MicroChatWeb.Presence.fetchers_pids() do
+        ref = Process.monitor(pid)
+        assert_receive {:DOWN, ^ref, _, _, _}, 1000
+      end
+    end)
+
     %{socket: socket}
   end
 
@@ -76,6 +83,18 @@ defmodule MicroChatWeb.RoomChannelTest do
       "user_id" => ^user_id
     })
 
+    assert_broadcast "presence_diff", %{
+      joins: %{
+        ^user_id => %{
+          metas: [
+            %{
+              is_in_call: true
+            }
+          ]
+        }
+      }
+    }
+
     assert_reply ref, :ok, %{
       "ice_servers" => [_ | _]
     }
@@ -96,6 +115,18 @@ defmodule MicroChatWeb.RoomChannelTest do
       "user_id" => ^user_id
     })
 
+    assert_broadcast "presence_diff", %{
+      joins: %{
+        ^user_id => %{
+          metas: [
+            %{
+              is_in_call: true
+            }
+          ]
+        }
+      }
+    }
+
     assert_reply ref, :ok, %{
       "ice_servers" => [_ | _]
     }
@@ -110,9 +141,50 @@ defmodule MicroChatWeb.RoomChannelTest do
     )
 
     push(socket, "user:leave_call", %{})
+
     assert_broadcast("call:user_left", %{
       "username" => ^username,
       "user_id" => ^user_id
     })
+
+    assert_broadcast "presence_diff", %{
+      joins: %{
+        ^user_id => %{
+          metas: [
+            %{
+              is_in_call: false
+            }
+          ]
+        }
+      }
+    }
+  end
+
+  test "user:typing", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+
+    assert_push "presence_state", %{
+      ^user_id => %{
+        metas: [
+          %{
+            is_typing: false
+          }
+        ]
+      }
+    }
+
+    push(socket, "user:typing", %{"typing" => true})
+
+    assert_broadcast "presence_diff", %{
+      joins: %{
+        ^user_id => %{
+          metas: [
+            %{
+              is_typing: true
+            }
+          ]
+        }
+      }
+    }
   end
 end
