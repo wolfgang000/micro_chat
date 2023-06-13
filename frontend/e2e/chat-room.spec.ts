@@ -150,14 +150,14 @@ test('Check user presence(members online modal)', async ({ browser }) => {
   await loginPageUserWolf.performLogin('UserWolf')
   await chatRoomPageUserWolf.validateCurrentUrl()
   await chatRoomPageUserWolf.openMembersOnlineModal()
-  await expect(chatRoomPageUserWolf.membersOnlineModal).toContainText('UserWolf')
+  await expect(chatRoomPageUserWolf.membersOnlineModal).toContainText('UserWolf (You)')
 
   // Check UserWolf members online modal
   await chatRoomPageUserDog.goto(roomId)
   await loginPageUserDog.performLogin('UserDog')
   await chatRoomPageUserDog.validateCurrentUrl()
   await chatRoomPageUserDog.openMembersOnlineModal()
-  await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserDog')
+  await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserDog (You)')
   await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserWolf')
   // Check UserDog presence on UserWolf's tab
   await expect(chatRoomPageUserDog.membersOnlineModal).toContainText('UserDog')
