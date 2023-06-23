@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue'
+import { onBeforeMount, onUnmounted, ref } from 'vue'
 import { socketConnection } from '../api'
 import { useRoute } from 'vue-router'
 import {
@@ -10,6 +10,7 @@ import { userStore } from '@/stores/user'
 
 import ChatHeader from '@/components/chat-room/Header.vue'
 import MessagesSection from '@/components/chat-room/MessagesSection.vue'
+import VideosSection from '@/components/chat-room/VideosSection.vue'
 
 const route = useRoute()
 const hasJoinedTheChannel = ref(false)
@@ -35,9 +36,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="chat-room-main-container d-flex flex-column" v-if="hasJoinedTheChannel">
-    <ChatHeader />
-    <MessagesSection />
+  <div class="d-flex">
+    <div style="width: 50%" v-if="roomStore.isVideoChatActivated">
+      <VideosSection />
+    </div>
+    <div class="chat-room-main-container d-flex flex-column" v-if="hasJoinedTheChannel">
+      <ChatHeader />
+      <MessagesSection />
+    </div>
   </div>
 </template>
 
@@ -45,5 +51,6 @@ onUnmounted(() => {
 .chat-room-main-container {
   background: #f7f9fa;
   height: 100vh;
+  width: 100%;
 }
 </style>

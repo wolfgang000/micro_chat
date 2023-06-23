@@ -22,12 +22,15 @@ const inCallUsers = computed(() => {
   <div>
     <div class="contact-header d-flex align-items-center">
       <div class="d-flex justify-content-between" style="width: 100%; margin-right: 0.5rem">
-        <div class="d-flex align-items-center ms-2">
+        <div
+          class="d-flex align-items-center ms-2"
+          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
+        >
           <a href="#"
             ><strong>{{ roomStore.roomName }}</strong></a
           >
         </div>
-        <div>
+        <div style="white-space: nowrap">
           <span v-if="env.feature_flag_videocall">
             <button
               v-if="inCallUsers.length === 0"
