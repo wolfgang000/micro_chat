@@ -60,6 +60,9 @@ export const roomStore = reactive({
     return navigator.mediaDevices.getUserMedia({ video: true, audio: true }).catch((error) => {
       console.error('error', error)
     })
+  },
+  setVideoElementCurrentUser(value: HTMLVideoElement) {
+    value.srcObject = localMediaStream
   }
 })
 
