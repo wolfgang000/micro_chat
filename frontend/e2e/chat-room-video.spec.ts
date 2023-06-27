@@ -111,6 +111,70 @@ test('Join an already started call', async ({ browser }) => {
   }
 })
 
+test('Join a call(Modal button)', async ({ browser }) => {
+  const roomId = v4()
+  // UserWolf
+  const { page: pageUserWolf, chatRoomPage: chatRoomPageUserWolf } =
+    await createChatRoomPageAndLogin(browser, 'UserWolf', roomId)
+  // UserDog
+  const { page: pageUserDog, chatRoomPage: chatRoomPageUserDog } = await createChatRoomPageAndLogin(
+    browser,
+    'UserDog',
+    roomId
+  )
+
+  // Check that the modal is not visible
+  await expect(chatRoomPageUserDog.joinCallModal).not.toBeVisible()
+
+  // Start call from UserWolf's tab
+  await chatRoomPageUserWolf.startCallButton.click()
+
+  // Check that the modal is now visible
+  await expect(chatRoomPageUserDog.joinCallModal).toBeVisible()
+
+  // ---------------------------------------------------
+  // Join
+  await chatRoomPageUserDog.joinCallModalButtonJoin.click()
+  // ---------------------------------------------------
+  // Check in Call Indicator again
+  await expect(chatRoomPageUserDog.inCallIndicatorContainer).toContainText('UserDog')
+  // ---------------------------------------------------
+  // Check UserWolf video element on UserDog tab
+  // ---------------------------------------------------
+  const peerVideoElements = await chatRoomPageUserDog.remoteUserVideoElements
+  const peerVideoElementsCount = await peerVideoElements.count()
+  expect(peerVideoElementsCount).toBe(1) // only one peer
+  for (let i = 0; i < peerVideoElementsCount; i++) {
+    await expect(peerVideoElements.nth(i)).toBeVisible()
+    // wait for mocked webcam video to loaded
+    await pageUserWolf.waitForTimeout(500)
+    const currentUserVideoElementCurrentTime = await peerVideoElements
+      .nth(i)
+      .evaluate((e: HTMLVideoElement) => {
+        return (e as HTMLVideoElement).currentTime
+      })
+    // Check if the video element is streaming the peer's mocked webcam
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+  }
+  // ---------------------------------------------------
+  // Check remote UserDog video element on UserWolf tab
+  // ---------------------------------------------------
+  const peersVideoElementsWolf = await chatRoomPageUserWolf.remoteUserVideoElements
+  const peerUserVideoElementsCountWolf = await peersVideoElementsWolf.count()
+  expect(peerVideoElementsCount).toBe(1) // only one peer
+  for (let i = 0; i < peerUserVideoElementsCountWolf; i++) {
+    await expect(peersVideoElementsWolf.nth(i)).toBeVisible()
+    // wait for mocked webcam video to loaded
+    await pageUserWolf.waitForTimeout(500)
+    const currentUserVideoElementCurrentTime = await peersVideoElementsWolf
+      .nth(i)
+      .evaluate((e: HTMLVideoElement) => {
+        return (e as HTMLVideoElement).currentTime
+      })
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+  }
+})
+
 test('Join a call and leave', async ({ browser }) => {
   const roomId = v4()
   // UserWolf

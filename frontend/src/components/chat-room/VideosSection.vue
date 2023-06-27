@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { socketConnection } from '@/api'
-import { localMediaStream, roomStore } from '@/stores/room'
-import { userStore } from '@/stores/user'
-
-import { ref, onMounted, nextTick } from 'vue'
+import { roomStore } from '@/stores/room'
+import { onMounted } from 'vue'
 
 onMounted(async () => {
   const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
