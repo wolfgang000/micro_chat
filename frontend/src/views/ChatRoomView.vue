@@ -37,7 +37,7 @@ onUnmounted(() => {
 
 <template>
   <div class="d-flex">
-    <div style="width: 50%" v-if="roomStore.isVideoChatActivated">
+    <div style="width: 50%; max-height: 100vh" v-if="roomStore.isVideoChatActivated">
       <VideosSection />
     </div>
     <div class="chat-room-main-container d-flex flex-column" v-if="hasJoinedTheChannel">

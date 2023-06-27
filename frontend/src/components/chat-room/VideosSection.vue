@@ -14,17 +14,24 @@ onMounted(async () => {
 </script>
 
 <template>
-  <video class="video" id="currentUserVideoElement" autoplay muted></video>
+  <div class="video-chat-container">
+    <video class="video" id="currentUserVideoElement" autoplay muted></video>
 
-  <video
-    style=""
-    class="video remote-user"
-    autoplay
-    v-for="peer in roomStore.peers"
-    :id="peer.element_id"
-  ></video>
+    <video
+      style=""
+      class="video remote-user"
+      autoplay
+      v-for="peer in roomStore.peers"
+      :id="peer.element_id"
+    ></video>
+  </div>
 </template>
 <style scoped>
+.video-chat-container {
+  height: 100%;
+  overflow-y: auto;
+  background: #202124;
+}
 .video {
   width: 100% !important;
   height: auto !important;
