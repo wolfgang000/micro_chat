@@ -4,6 +4,7 @@ import dateFormat from 'dateformat'
 import { Presence } from 'phoenix'
 import { nextTick, reactive } from 'vue'
 import { userStore } from './user'
+import { Console } from 'console'
 
 export let roomPresences = {}
 export let localMediaStream: MediaStream
@@ -20,7 +21,6 @@ export const roomStore = reactive({
   }[],
   listItems: [] as IChatListItem[],
   isVideoChatActivated: false,
-  wasVideoActivateByCurrentUser: false,
   setConnectedUsers(value: IConnectedUser[]) {
     this.connectedUsers = value
   },
@@ -43,7 +43,6 @@ export const roomStore = reactive({
     this.requestMediaPermissions().then((webCamMediaStream) => {
       localMediaStream = webCamMediaStream!
       this.isVideoChatActivated = true
-      this.wasVideoActivateByCurrentUser = true
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
       const ice_servers_promise = new Promise((resolve, reject) => {
         channel
@@ -57,6 +56,7 @@ export const roomStore = reactive({
 
       this.iceServersPromise = ice_servers_promise
 
+      channel.on(`call:peer_offer_created:${userStore.userId}`, peer_offer_created_callback)
       channel.on('call:user_joined', user_joined_callback)
       channel.on(`call:user_left`, (user) => {
         const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
@@ -68,7 +68,6 @@ export const roomStore = reactive({
     this.requestMediaPermissions().then((webCamMediaStream) => {
       localMediaStream = webCamMediaStream!
       this.isVideoChatActivated = true
-      this.wasVideoActivateByCurrentUser = false
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
       const ice_servers_promise = new Promise((resolve, reject) => {
         channel
@@ -81,6 +80,8 @@ export const roomStore = reactive({
       })
       this.iceServersPromise = ice_servers_promise
 
+      channel.on(`call:peer_answer_created:${userStore.userId}`, peer_answer_created)
+      channel.on(`call:peer_offer_created:${userStore.userId}`, peer_offer_created_callback)
       channel.on('call:user_joined', user_joined_callback)
       channel.on(`call:user_left`, (user) => {
         const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
@@ -90,11 +91,12 @@ export const roomStore = reactive({
   },
   leaveCall() {
     this.isVideoChatActivated = false
-    this.wasVideoActivateByCurrentUser = false
     localMediaStream.getTracks().forEach((track) => {
       track.stop()
     })
     const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+    channel.off(`call:peer_answer_created:${userStore.userId}`)
+    channel.off(`call:peer_offer_created:${userStore.userId}`)
     channel.off('call:user_joined')
     channel.off('call:user_left')
     channel.push('user:leave_call', {})
@@ -131,6 +133,7 @@ const onJoin = (id: any, current: any, newPres: any) => {
 const user_joined_callback = async (user: any) => {
   if (user.user_id === userStore.userId) return
 
+  const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
   const ice_servers_resp = await roomStore.iceServersPromise
 
   const RTCPeerConfig = {
@@ -148,6 +151,20 @@ const user_joined_callback = async (user: any) => {
 
   const videoRemoteUserElement = document.getElementById(peer.element_id) as HTMLVideoElement
 
+  peer.pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      console.log(event.candidate)
+    }
+  }
+
+  const offerDescription = await peer.pc.createOffer()
+  await peer.pc.setLocalDescription(offerDescription)
+  const offer = {
+    sdp: offerDescription.sdp,
+    type: offerDescription.type
+  }
+  channel.push(`user:create_peer_offer:${peer.user_id}`, { offer: offer })
+
   // Show video from peer
   peer.pc.ontrack = (event) => {
     const stream = event.streams[0]
@@ -157,6 +174,49 @@ const user_joined_callback = async (user: any) => {
   }
   // Send video to peer
   localMediaStream.getTracks().forEach((track) => peer.pc.addTrack(track, localMediaStream))
+}
+
+const peer_offer_created_callback = async (payload: any) => {
+  const channel = socketConnection.getOrCreateChannel(roomStore.roomTopic)
+  const ice_servers_resp = await roomStore.iceServersPromise
+
+  const RTCPeerConfig = {
+    iceServers: ice_servers_resp.ice_servers
+  }
+
+  const peer = {
+    pc: new RTCPeerConnection(RTCPeerConfig),
+    user_id: payload.user_id,
+    username: payload.username,
+    element_id: `remote-user-${payload.user_id}`
+  }
+  roomStore.pushPeers(peer)
+  await nextTick()
+
+  const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
+  peer.pc.ontrack = (event) => {
+    const stream = event.streams[0]
+    videoRemoteUser.srcObject = stream
+  }
+
+  localMediaStream.getTracks().forEach((track) => peer.pc.addTrack(track, localMediaStream))
+
+  await peer.pc.setRemoteDescription(new RTCSessionDescription(payload.offer))
+  const answerDescription = await peer.pc.createAnswer()
+  await peer.pc.setLocalDescription(answerDescription)
+
+  const answer = {
+    type: answerDescription.type,
+    sdp: answerDescription.sdp
+  }
+
+  channel.push(`user:create_peer_answer:${peer.user_id}`, { answer })
+}
+
+const peer_answer_created = async (payload: any) => {
+  const peer = roomStore.peers.find((peer) => peer.user_id === payload.user_id)
+  const answerDescription = new RTCSessionDescription(payload.answer)
+  peer!.pc.setRemoteDescription(answerDescription)
 }
 
 const onLeave = (id: any, current: any, leftPres: any) => {

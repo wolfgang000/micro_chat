@@ -108,4 +108,26 @@ defmodule MicroChatWeb.RoomChannel do
 
     {:reply, :ok, socket}
   end
+
+  @impl true
+  def handle_in("user:create_peer_offer:" <> peer_id, %{"offer" => offer}, socket) do
+    broadcast(socket, "call:peer_offer_created:" <> peer_id, %{
+      "offer" => offer,
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
+
+    {:reply, :ok, socket}
+  end
+
+  @impl true
+  def handle_in("user:create_peer_answer:" <> peer_id, %{"answer" => answer}, socket) do
+    broadcast(socket, "call:peer_answer_created:" <> peer_id, %{
+      "answer" => answer,
+      "username" => socket.assigns.username,
+      "user_id" => socket.assigns.user_id
+    })
+
+    {:reply, :ok, socket}
+  end
 end
