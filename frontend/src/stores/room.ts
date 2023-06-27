@@ -2,16 +2,18 @@ import { socketConnection } from '@/api'
 import { ChatListItemType, type IChatListItem, type IConnectedUser, type IMessage } from '@/models'
 import dateFormat from 'dateformat'
 import { Presence } from 'phoenix'
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { userStore } from './user'
 
 export let roomPresences = {}
 export let localMediaStream: MediaStream
 export const roomStore = reactive({
+  iceServersPromise: null as unknown as Promise<any>,
   roomTopic: '',
   roomName: '',
   connectedUsers: [] as IConnectedUser[],
   peers: [] as {
+    pc: RTCPeerConnection
     user_id: string
     username: string
     element_id: string
@@ -43,17 +45,19 @@ export const roomStore = reactive({
       this.isVideoChatActivated = true
       this.wasVideoActivateByCurrentUser = true
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
-      channel.push('user:start_call', {})
-
-      channel.on('call:user_joined', (user) => {
-        if (user.user_id === userStore.userId) return
-
-        roomStore.pushPeers({
-          user_id: user.user_id,
-          username: user.username,
-          element_id: `remote-user-${user.user_id}`
-        })
+      const ice_servers_promise = new Promise((resolve, reject) => {
+        channel
+          .push('user:start_call', {})
+          .receive('ok', (ice_servers) => {
+            resolve(ice_servers)
+          })
+          .receive('error', (reasons) => reject(reasons))
+          .receive('timeout', () => reject('Networking issue...'))
       })
+
+      this.iceServersPromise = ice_servers_promise
+
+      channel.on('call:user_joined', user_joined_callback)
       channel.on(`call:user_left`, (user) => {
         const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
         roomStore.setPeers(newPeers)
@@ -66,17 +70,18 @@ export const roomStore = reactive({
       this.isVideoChatActivated = true
       this.wasVideoActivateByCurrentUser = false
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
-      channel.push('user:join_call', {})
-
-      channel.on('call:user_joined', (user) => {
-        if (user.user_id === userStore.userId) return
-
-        roomStore.pushPeers({
-          user_id: user.user_id,
-          username: user.username,
-          element_id: `remote-user-${user.user_id}`
-        })
+      const ice_servers_promise = new Promise((resolve, reject) => {
+        channel
+          .push('user:join_call', {})
+          .receive('ok', (ice_servers) => {
+            resolve(ice_servers)
+          })
+          .receive('error', (reasons) => reject(reasons))
+          .receive('timeout', () => reject('Networking issue...'))
       })
+      this.iceServersPromise = ice_servers_promise
+
+      channel.on('call:user_joined', user_joined_callback)
       channel.on(`call:user_left`, (user) => {
         const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
         roomStore.setPeers(newPeers)
@@ -121,6 +126,37 @@ const onJoin = (id: any, current: any, newPres: any) => {
       }
     })
   }
+}
+
+const user_joined_callback = async (user: any) => {
+  if (user.user_id === userStore.userId) return
+
+  const ice_servers_resp = await roomStore.iceServersPromise
+
+  const RTCPeerConfig = {
+    iceServers: ice_servers_resp.ice_servers
+  }
+
+  const peer = {
+    pc: new RTCPeerConnection(RTCPeerConfig),
+    user_id: user.user_id,
+    username: user.username,
+    element_id: `remote-user-${user.user_id}`
+  }
+  roomStore.pushPeers(peer)
+  await nextTick()
+
+  const videoRemoteUserElement = document.getElementById(peer.element_id) as HTMLVideoElement
+
+  // Show video from peer
+  peer.pc.ontrack = (event) => {
+    const stream = event.streams[0]
+    if (!videoRemoteUserElement.srcObject) {
+      videoRemoteUserElement.srcObject = stream
+    }
+  }
+  // Send video to peer
+  localMediaStream.getTracks().forEach((track) => peer.pc.addTrack(track, localMediaStream))
 }
 
 const onLeave = (id: any, current: any, leftPres: any) => {
