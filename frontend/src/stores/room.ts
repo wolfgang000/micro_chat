@@ -11,6 +11,11 @@ export const roomStore = reactive({
   roomTopic: '',
   roomName: '',
   connectedUsers: [] as IConnectedUser[],
+  peers: [] as {
+    user_id: string
+    username: string
+    element_id: string
+  }[],
   listItems: [] as IChatListItem[],
   isVideoChatActivated: false,
   wasVideoActivateByCurrentUser: false,
@@ -22,6 +27,9 @@ export const roomStore = reactive({
   },
   setListItems(value: IChatListItem[]) {
     this.listItems = value
+  },
+  setPeers(value: any[]) {
+    this.peers = value
   },
   unshiftListItems(value: IChatListItem) {
     this.listItems.unshift(value)
@@ -36,6 +44,20 @@ export const roomStore = reactive({
       this.wasVideoActivateByCurrentUser = true
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
       channel.push('user:start_call', {})
+
+      channel.on('call:user_joined', (user) => {
+        if (user.user_id === userStore.userId) return
+
+        roomStore.pushPeers({
+          user_id: user.user_id,
+          username: user.username,
+          element_id: `remote-user-${user.user_id}`
+        })
+      })
+      channel.on(`call:user_left`, (user) => {
+        const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
+        roomStore.setPeers(newPeers)
+      })
     })
   },
   joinCall() {
@@ -45,6 +67,20 @@ export const roomStore = reactive({
       this.wasVideoActivateByCurrentUser = false
       const channel = socketConnection.getOrCreateChannel(this.roomTopic)
       channel.push('user:join_call', {})
+
+      channel.on('call:user_joined', (user) => {
+        if (user.user_id === userStore.userId) return
+
+        roomStore.pushPeers({
+          user_id: user.user_id,
+          username: user.username,
+          element_id: `remote-user-${user.user_id}`
+        })
+      })
+      channel.on(`call:user_left`, (user) => {
+        const newPeers = roomStore.peers.filter((peer) => peer.user_id !== user.user_id)
+        roomStore.setPeers(newPeers)
+      })
     })
   },
   leaveCall() {
@@ -54,6 +90,8 @@ export const roomStore = reactive({
       track.stop()
     })
     const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+    channel.off('call:user_joined')
+    channel.off('call:user_left')
     channel.push('user:leave_call', {})
   },
   requestMediaPermissions() {
@@ -63,6 +101,9 @@ export const roomStore = reactive({
   },
   setVideoElementCurrentUser(value: HTMLVideoElement) {
     value.srcObject = localMediaStream
+  },
+  pushPeers(value: any) {
+    this.peers.push(value)
   }
 })
 

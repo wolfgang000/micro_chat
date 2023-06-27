@@ -11,6 +11,8 @@ export class ChatRoomPage {
   readonly typingIndicatorContainer: Locator
   //------
   readonly startCallButton: Locator
+  readonly currentUserVideoElement: Locator
+  readonly remoteUserVideoElements: Locator
   readonly joinCallButton: Locator
   readonly leaveCallButton: Locator
   readonly inCallIndicatorContainer: Locator
@@ -24,9 +26,11 @@ export class ChatRoomPage {
     this.membersOnlineModal = page.locator('#membersOnlineModal')
     this.typingIndicatorContainer = page.locator('#typingIndicatorContainer')
     this.startCallButton = page.locator('#startCallButton')
+    this.currentUserVideoElement = page.locator('#currentUserVideoElement')
     this.joinCallButton = page.locator('#joinCallButton')
     this.leaveCallButton = page.locator('#leaveCallButton')
     this.inCallIndicatorContainer = page.locator('#InCallIndicatorContainer')
+    this.remoteUserVideoElements = page.locator("//video[contains(@class, 'remote-user')]")
   }
 
   async goto(roomId: string) {
