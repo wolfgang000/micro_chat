@@ -2,7 +2,7 @@
 <img src="https://github.com/wolfgang000/micro_chat/assets/4041136/196d0fbe-41be-4dd7-a74b-4d88c2d82b19"/>  
 </p>
 <p align=center>
-  A simple chat app that does not save/track or monitor your messages.
+  A simple messaging/video chat app that does not save/track or monitor your messages.
   
   Thus if you were not present in the chat room when your friends were chatting about the last John Wick movie, tough luck, those messages are gone.
 </p>
