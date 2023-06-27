@@ -4,7 +4,6 @@ import dateFormat from 'dateformat'
 import { Presence } from 'phoenix'
 import { nextTick, reactive } from 'vue'
 import { userStore } from './user'
-import { Console } from 'console'
 
 export let roomPresences = {}
 export let localMediaStream: MediaStream
@@ -213,7 +212,6 @@ const peer_offer_created_callback = async (payload: any) => {
   peer.pc.ontrack = (event) => {
     const stream = event.streams[0]
     if (!videoRemoteUserElement.srcObject) {
-      console.log('add videoRemoteUserElement.srcObject')
       videoRemoteUserElement.srcObject = stream
     }
   }
