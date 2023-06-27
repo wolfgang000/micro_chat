@@ -90,8 +90,7 @@ test('Join an already started call', async ({ browser }) => {
         return (e as HTMLVideoElement).currentTime
       })
     // Check if the video element is streaming the peer's mocked webcam
-    // TODO: re-enable later
-    // expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
   }
   // ---------------------------------------------------
   // Check remote UserDog video element on UserWolf tab
@@ -108,8 +107,7 @@ test('Join an already started call', async ({ browser }) => {
       .evaluate((e: HTMLVideoElement) => {
         return (e as HTMLVideoElement).currentTime
       })
-    // TODO: re-enable later
-    // expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
+    expect(currentUserVideoElementCurrentTime).toBeGreaterThan(0)
   }
 })
 
