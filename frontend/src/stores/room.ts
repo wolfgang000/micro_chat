@@ -153,8 +153,7 @@ const user_joined_callback = async (user: any) => {
   roomStore.pushPeers(peer)
   await nextTick()
 
-  const videoRemoteUserElement = document.getElementById(peer.element_id) as HTMLVideoElement
-
+  // Send ice_candidate to peer
   peer.pc.onicecandidate = (event) => {
     if (event.candidate) {
       channel.push(`user:create_peer_ice_candidate:${peer.user_id}`, {
@@ -163,14 +162,7 @@ const user_joined_callback = async (user: any) => {
     }
   }
 
-  const offerDescription = await peer.pc.createOffer()
-  await peer.pc.setLocalDescription(offerDescription)
-  const offer = {
-    sdp: offerDescription.sdp,
-    type: offerDescription.type
-  }
-  channel.push(`user:create_peer_offer:${peer.user_id}`, { offer: offer })
-
+  const videoRemoteUserElement = document.getElementById(peer.element_id) as HTMLVideoElement
   // Show video from peer
   peer.pc.ontrack = (event) => {
     const stream = event.streams[0]
@@ -180,6 +172,14 @@ const user_joined_callback = async (user: any) => {
   }
   // Send video to peer
   localMediaStream.getTracks().forEach((track) => peer.pc.addTrack(track, localMediaStream))
+
+  const offerDescription = await peer.pc.createOffer()
+  await peer.pc.setLocalDescription(offerDescription)
+  const offer = {
+    sdp: offerDescription.sdp,
+    type: offerDescription.type
+  }
+  channel.push(`user:create_peer_offer:${peer.user_id}`, { offer: offer })
 }
 
 const peer_offer_created_callback = async (payload: any) => {
@@ -199,6 +199,7 @@ const peer_offer_created_callback = async (payload: any) => {
   roomStore.pushPeers(peer)
   await nextTick()
 
+  // Send ice_candidate to peer
   peer.pc.onicecandidate = (event) => {
     if (event.candidate) {
       channel.push(`user:create_peer_ice_candidate:${peer.user_id}`, {
@@ -207,12 +208,16 @@ const peer_offer_created_callback = async (payload: any) => {
     }
   }
 
-  const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
+  const videoRemoteUserElement = document.getElementById(peer.element_id) as HTMLVideoElement
+  // Show video from peer
   peer.pc.ontrack = (event) => {
     const stream = event.streams[0]
-    videoRemoteUser.srcObject = stream
+    if (!videoRemoteUserElement.srcObject) {
+      console.log('add videoRemoteUserElement.srcObject')
+      videoRemoteUserElement.srcObject = stream
+    }
   }
-
+  // Send video to peer
   localMediaStream.getTracks().forEach((track) => peer.pc.addTrack(track, localMediaStream))
 
   await peer.pc.setRemoteDescription(new RTCSessionDescription(payload.offer))
