@@ -32,7 +32,6 @@ services:
     working_dir: /home/node/app
     environment:
       VITE_WEBSOCKET_BASE_URL: ws://localhost:4000
-      VITE_FEATURE_FLAG_VIDEOCALL: true
     volumes:
       - ./frontend/tsconfig.json:/home/node/app/tsconfig.json
       - ./frontend/tsconfig.vitest.json:/home/node/app/tsconfig.vitest.json
