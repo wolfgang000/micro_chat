@@ -56,6 +56,8 @@ export const roomStore = reactive({
 
       this.iceServersPromise = ice_servers_promise
 
+      channel.on(`call:peer_ice_candidate_created:${userStore.userId}`, peer_ice_candidate_created)
+      channel.on(`call:peer_answer_created:${userStore.userId}`, peer_answer_created)
       channel.on(`call:peer_offer_created:${userStore.userId}`, peer_offer_created_callback)
       channel.on('call:user_joined', user_joined_callback)
       channel.on(`call:user_left`, (user) => {
