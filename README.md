@@ -102,3 +102,4 @@ dokku logs micro-chat-back
 - [ ] Add room name
 - [ ] Add validations to username(front + back)
 - [ ] Add logo to login view
+- [ ] Handle connections error on WebRTC
