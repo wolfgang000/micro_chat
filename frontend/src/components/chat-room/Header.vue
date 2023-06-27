@@ -3,7 +3,6 @@ import { roomStore } from '@/stores/room'
 import { userStore } from '@/stores/user'
 import IconPhone from '../icons/IconPhone.vue'
 import { computed } from 'vue'
-import env from '@/env'
 
 const onStartCallButtonClick = async () => {
   roomStore.startCall()
@@ -31,7 +30,7 @@ const inCallUsers = computed(() => {
           >
         </div>
         <div style="white-space: nowrap">
-          <span v-if="env.feature_flag_videocall">
+          <span>
             <button
               v-if="inCallUsers.length === 0"
               id="startCallButton"
