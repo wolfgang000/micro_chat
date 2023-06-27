@@ -132,7 +132,11 @@ defmodule MicroChatWeb.RoomChannel do
   end
 
   @impl true
-  def handle_in("user:create_peer_ice_candidate:" <> peer_id, %{"ice_candidate" => ice_candidate}, socket) do
+  def handle_in(
+        "user:create_peer_ice_candidate:" <> peer_id,
+        %{"ice_candidate" => ice_candidate},
+        socket
+      ) do
     broadcast(socket, "call:peer_ice_candidate_created:" <> peer_id, %{
       "ice_candidate" => ice_candidate,
       "username" => socket.assigns.username,
@@ -141,5 +145,4 @@ defmodule MicroChatWeb.RoomChannel do
 
     {:reply, :ok, socket}
   end
-
 end
