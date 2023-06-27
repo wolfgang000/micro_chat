@@ -93,7 +93,6 @@ dokku logs micro-chat-back
 ### Todo
 
 - [ ] Add password protection
-- [ ] Add video call with webrtc
 - [ ] Add captcha
 - [ ] Add credo + format validation
 - [ ] Add tests Coverage
@@ -102,3 +101,5 @@ dokku logs micro-chat-back
 - [ ] Add room name
 - [ ] Add validations to username(front + back)
 - [ ] Add logo to login view
+- [ ] Handle connections error on WebRTC
+- [ ] Add username to video elements

@@ -75,7 +75,7 @@ const inCallUsers = computed(() => {
         </div>
       </div>
     </div>
-    <!-- Modal -->
+    <!-- members Online Modal -->
     <div
       class="modal fade"
       id="membersOnlineModal"
@@ -103,6 +103,40 @@ const inCallUsers = computed(() => {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Join Call Modal -->
+    <div
+      class="modal fade"
+      id="joinCallModal"
+      tabindex="-1"
+      aria-labelledby="joinCallModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="joinCallModalLabel">Group call started</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ignore</button>
+            <button
+              id="joinCallModalButtonJoin"
+              type="button"
+              class="btn btn-success"
+              data-bs-dismiss="modal"
+              @click="onJoinCallButtonClick"
+            >
+              Join
+            </button>
           </div>
         </div>
       </div>

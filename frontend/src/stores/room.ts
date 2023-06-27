@@ -4,6 +4,7 @@ import dateFormat from 'dateformat'
 import { Presence } from 'phoenix'
 import { nextTick, reactive } from 'vue'
 import { userStore } from './user'
+import { Modal } from 'bootstrap'
 
 export let roomPresences = {}
 export let localMediaStream: MediaStream
@@ -264,6 +265,13 @@ export const setupChannelPresenceCallbacks = (channelTopic: string) => {
         : ChatListItemType.MessageReceived
 
     roomStore.unshiftListItems({ type: itemType, meta: message })
+  })
+
+  socketConnection.channelOn(channelTopic, 'call:started', (payload) => {
+    if (payload.user_id === userStore.userId) return
+
+    const joinCallModal = new Modal(document.getElementById('joinCallModal')!)
+    joinCallModal.show()
   })
 
   socketConnection.channelOn(channelTopic, 'presence_state', (state) => {

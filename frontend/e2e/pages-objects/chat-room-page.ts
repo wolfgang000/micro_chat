@@ -16,6 +16,8 @@ export class ChatRoomPage {
   readonly joinCallButton: Locator
   readonly leaveCallButton: Locator
   readonly inCallIndicatorContainer: Locator
+  readonly joinCallModal: Locator
+  readonly joinCallModalButtonJoin: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -31,6 +33,8 @@ export class ChatRoomPage {
     this.leaveCallButton = page.locator('#leaveCallButton')
     this.inCallIndicatorContainer = page.locator('#InCallIndicatorContainer')
     this.remoteUserVideoElements = page.locator("//video[contains(@class, 'remote-user')]")
+    this.joinCallModal = page.locator('#joinCallModal')
+    this.joinCallModalButtonJoin = page.locator('#joinCallModalButtonJoin')
   }
 
   async goto(roomId: string) {
