@@ -132,7 +132,7 @@ test('Join a call and leave', async ({ browser }) => {
   // ---------------------------------------------------
   // Check UserDog video element on UserWolf tab
   // ---------------------------------------------------
-  await expect(chatRoomPageUserWolf.inCallIndicatorContainer).toContainText('UserDog')
+  await expect(chatRoomPageUserWolf.inCallIndicatorContainer).toContainText('UserDog-NOT')
   expect(await (await chatRoomPageUserWolf.remoteUserVideoElements).count()).toBe(1) // only one peer(UserDog)
   // ---------------------------------------------------
   // UserDog Leaves
