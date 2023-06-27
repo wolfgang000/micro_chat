@@ -80,6 +80,7 @@ export const roomStore = reactive({
       })
       this.iceServersPromise = ice_servers_promise
 
+      channel.on(`call:peer_ice_candidate_created:${userStore.userId}`, peer_ice_candidate_created)
       channel.on(`call:peer_answer_created:${userStore.userId}`, peer_answer_created)
       channel.on(`call:peer_offer_created:${userStore.userId}`, peer_offer_created_callback)
       channel.on('call:user_joined', user_joined_callback)
@@ -95,6 +96,7 @@ export const roomStore = reactive({
       track.stop()
     })
     const channel = socketConnection.getOrCreateChannel(this.roomTopic)
+    channel.off(`call:peer_ice_candidate_created:${userStore.userId}`)
     channel.off(`call:peer_answer_created:${userStore.userId}`)
     channel.off(`call:peer_offer_created:${userStore.userId}`)
     channel.off('call:user_joined')
@@ -153,7 +155,9 @@ const user_joined_callback = async (user: any) => {
 
   peer.pc.onicecandidate = (event) => {
     if (event.candidate) {
-      console.log(event.candidate)
+      channel.push(`user:create_peer_ice_candidate:${peer.user_id}`, {
+        ice_candidate: event.candidate
+      })
     }
   }
 
@@ -193,6 +197,14 @@ const peer_offer_created_callback = async (payload: any) => {
   roomStore.pushPeers(peer)
   await nextTick()
 
+  peer.pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      channel.push(`user:create_peer_ice_candidate:${peer.user_id}`, {
+        ice_candidate: event.candidate
+      })
+    }
+  }
+
   const videoRemoteUser = document.getElementById(peer.element_id) as HTMLVideoElement
   peer.pc.ontrack = (event) => {
     const stream = event.streams[0]
@@ -217,6 +229,12 @@ const peer_answer_created = async (payload: any) => {
   const peer = roomStore.peers.find((peer) => peer.user_id === payload.user_id)
   const answerDescription = new RTCSessionDescription(payload.answer)
   peer!.pc.setRemoteDescription(answerDescription)
+}
+
+const peer_ice_candidate_created = async (payload: any) => {
+  const peer = roomStore.peers.find((peer) => peer.user_id === payload.user_id)
+  const ice_candidate = new RTCIceCandidate(payload.ice_candidate)
+  peer!.pc.addIceCandidate(ice_candidate)
 }
 
 const onLeave = (id: any, current: any, leftPres: any) => {
