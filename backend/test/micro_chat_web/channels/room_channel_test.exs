@@ -160,6 +160,46 @@ defmodule MicroChatWeb.RoomChannelTest do
     }
   end
 
+
+  test "create_peer_offer", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+    peer_id = Ecto.UUID.bingenerate() |> Ecto.UUID.cast!()
+    push(socket, "user:create_peer_offer:#{peer_id}", %{"offer" => %{"test" => "example"}})
+
+    broadcast_topic = "call:peer_offer_created:#{peer_id}"
+    assert_broadcast(^broadcast_topic, %{
+      "offer" => _,
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+  end
+
+  test "create_peer_answer", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+    peer_id = Ecto.UUID.bingenerate() |> Ecto.UUID.cast!()
+    push(socket, "user:create_peer_answer:#{peer_id}", %{"answer" => %{"test" => "example"}})
+
+    broadcast_topic = "call:peer_answer_created:#{peer_id}"
+    assert_broadcast(^broadcast_topic, %{
+      "answer" => _,
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+  end
+
+  test "create_peer_ice_candidate", %{socket: socket} do
+    %{assigns: %{username: username, user_id: user_id}} = socket
+    peer_id = Ecto.UUID.bingenerate() |> Ecto.UUID.cast!()
+    push(socket, "user:create_peer_ice_candidate:#{peer_id}", %{"ice_candidate" => %{"test" => "example"}})
+
+    broadcast_topic = "call:peer_ice_candidate_created:#{peer_id}"
+    assert_broadcast(^broadcast_topic, %{
+      "ice_candidate" => _,
+      "username" => ^username,
+      "user_id" => ^user_id
+    })
+  end
+
   test "user:typing", %{socket: socket} do
     %{assigns: %{user_id: user_id}} = socket
 
