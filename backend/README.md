@@ -15,6 +15,12 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 mix test
 ```
 
+## Build production image localy
+
+```
+docker build -t myimage -f Dockerfile .
+```
+
 ## Learn more
 
 - Official website: https://www.phoenixframework.org/
