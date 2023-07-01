@@ -11,7 +11,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.14.5-erlang-26.0-debian-bullseye-20230227-slim
 #
-ARG ELIXIR_VERSION=1.14.5
+ARG ELIXIR_VERSION=1.15.1
 ARG OTP_VERSION=26.0.2
 ARG DEBIAN_VERSION=bullseye-20230612-slim
 
@@ -21,7 +21,7 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+RUN apt-get update -y && apt-get install -y build-essential git erlang-dev  \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir

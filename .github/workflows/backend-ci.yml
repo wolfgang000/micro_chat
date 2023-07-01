@@ -30,7 +30,7 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: "1.14.5"
+          elixir-version: "1.15.1"
           otp-version: "26.0.2"
 
       - name: Retrieve Mix Dependencies Cache
