@@ -32,7 +32,7 @@
     "@types/bootstrap": "^5.2.6",
     "@types/dateformat": "^5.0.0",
     "@types/jsdom": "^21.1.1",
-    "@types/node": "18.16.1",
+    "@types/node": "20.3.3",
     "@types/phoenix": "^1.6.0",
     "@types/uuid": "^9.0.1",
     "@vitejs/plugin-vue": "^4.2.3",
