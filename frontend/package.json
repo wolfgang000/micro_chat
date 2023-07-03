@@ -34,7 +34,7 @@
     "@types/jsdom": "^21.1.1",
     "@types/node": "18.16.16",
     "@types/phoenix": "^1.6.0",
-    "@types/uuid": "^9.0.1",
+    "@types/uuid": "^9.0.2",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
