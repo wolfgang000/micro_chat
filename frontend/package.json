@@ -20,7 +20,7 @@
     "bootstrap": "^5.3.0",
     "dateformat": "^5.0.3",
     "phoenix": "^1.7.6",
-    "pinia": "^2.0.36",
+    "pinia": "^2.1.4",
     "uuid": "^9.0.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
