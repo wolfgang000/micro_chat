@@ -22,9 +22,7 @@ defaults:
 jobs:
   build:
     name: Build and test
-    runs-on: self-hosted
-    env:
-      ImageOS: ubuntu20
+    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
