@@ -33,7 +33,7 @@
     "@types/dateformat": "^5.0.0",
     "@types/jsdom": "^21.1.2",
     "@types/node": "18.16.16",
-    "@types/phoenix": "^1.6.0",
+    "@types/phoenix": "^1.6.2",
     "@types/uuid": "^9.0.4",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/eslint-config-prettier": "^8.0.0",
