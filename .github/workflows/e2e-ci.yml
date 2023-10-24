@@ -21,6 +21,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.3.6
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('docker-compose.yml') }}-${{ hashFiles('backend/Dockerfile.dev') }}-${{ hashFiles('frontend/Dockerfile.dev') }}
       - uses: isbang/compose-action@v1.3.2
       - uses: actions/setup-node@v3
         with:
