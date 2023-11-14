@@ -19,7 +19,7 @@
   "dependencies": {
     "bootstrap": "^5.3.2",
     "dateformat": "^5.0.3",
-    "phoenix": "^1.7.9",
+    "phoenix": "^1.7.10",
     "pinia": "^2.1.7",
     "uuid": "^9.0.1",
     "vue": "^3.3.2",
@@ -33,7 +33,7 @@
     "@types/dateformat": "^5.0.1",
     "@types/jsdom": "^21.1.4",
     "@types/node": "18.16.16",
-    "@types/phoenix": "^1.6.3",
+    "@types/phoenix": "^1.6.4",
     "@types/uuid": "^9.0.7",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/eslint-config-prettier": "^8.0.0",
