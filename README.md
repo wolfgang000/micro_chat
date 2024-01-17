@@ -34,7 +34,7 @@ Backend: http://localhost:4000
 ```
 # Install dokku
 # wget -NP . https://dokku.com/bootstrap.sh
-# sudo DOKKU_TAG=v0.30.6 bash bootstrap.sh
+# sudo DOKKU_TAG=v0.32.4 bash bootstrap.sh
 # dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 
 dokku apps:create micro-chat-back

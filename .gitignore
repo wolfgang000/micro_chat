@@ -1,3 +1,4 @@
 erl_crash.dump
 refs
 frontend/.env
+.env.remote.*
