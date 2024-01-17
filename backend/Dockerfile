@@ -74,7 +74,8 @@ ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
 RUN chown nobody /app
-COPY CHECKS .
+COPY app.json .
+
 
 # set runner ENV
 ENV MIX_ENV="prod"
