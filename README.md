@@ -47,6 +47,10 @@ dokku builder:set micro-chat-front build-dir frontend
 dokku config:set micro-chat-front \
   # Set the variables from frontend/.env.example.prod
 
+# Setup domain
+dokku domains:set micro-chat-front micro-chat.example.com
+dokku domains:set micro-chat-back micro-chat-back.example.com
+
 # Setup SSL certificate
 # Remember to open the 443 port
 dokku letsencrypt:set micro-chat-front email test@mail.com
@@ -54,9 +58,6 @@ dokku letsencrypt:enable micro-chat-front
 dokku letsencrypt:set micro-chat-back email test@mail.com
 dokku letsencrypt:enable micro-chat-back
 dokku letsencrypt:cron-job --add
-
-# Setup domain
-dokku domains:set micro-chat-front micro-chat.example.com
 ```
 
 ## Deploy and push changes
