@@ -47,7 +47,7 @@ defmodule MicroChat.MixProject do
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_live_dashboard, "~> 0.8.0"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:plug_checkup, "~> 0.6.0"},
       {:gettext, "~> 0.20"},
