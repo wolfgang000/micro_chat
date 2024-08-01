@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",
-    "@rushstack/eslint-patch": "^1.10.3",
+    "@rushstack/eslint-patch": "^1.10.4",
     "@tsconfig/node20": "^20.1.4",
     "@types/bootstrap": "^5.2.10",
     "@types/dateformat": "^5.0.2",
