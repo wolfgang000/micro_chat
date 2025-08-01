@@ -23,7 +23,7 @@
     "pinia": "^2.3.0",
     "uuid": "^10.0.0",
     "vue": "^3.5.17",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
